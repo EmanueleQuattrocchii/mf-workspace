@@ -1,0 +1,30 @@
+services:
+ 
+  shellClientService:
+ 
+    image: "shell"
+    build:
+      context: .
+      dockerfile: ./projects/shell/Dockerfile
+ 
+ 
+    ports:
+      - "4200:80"
+ 
+    container_name: shellClientService
+    restart: on-failure
+    hostname: "shellClientService"
+ 
+  mfe1ClientService:
+ 
+    image: "mfe1"
+    build:
+      context: .
+      dockerfile: ./projects/mfe1/Dockerfile
+ 
+    ports:
+      - "4201:80"
+ 
+    container_name: mfe1ClientService
+    restart: on-failure
+    hostname: "mfe1ClientService"

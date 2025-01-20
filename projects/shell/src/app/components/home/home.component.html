@@ -1,0 +1,100 @@
+<div class="home-container">
+    <div class="landing-content">
+        <div class="text-content">
+            <h1>Where <span class="custom-text">Fantasy</span> becomes reality</h1>
+            <p>Unleash your creativity and dive into worlds where anything is possible.</p>
+            <button class="cta-button" (click)="navigateToEvent()">Get Started</button>
+        </div>
+    </div>
+    <div class="info-container">
+        <div class="info-title">Why Choose Game Planner?</div>
+        <div class="group-container">
+            <div class="info-group">
+                <span class="icon-container"><i class="fa-solid fa-users"></i></span>
+                <div class="group-title">Community</div>
+                <div class="group-subtitle">Join a community of enthusiastic players and make new friends</div>
+            </div>
+            <div class="info-group">
+                <span class="icon-container"> <i class="fa-solid fa-calendar"></i></span>
+                <div class="group-title">Regular Events</div>
+                <div class="group-subtitle">Participate in weekly and monthly events for all experience levels</div>
+            </div>
+            <div class="info-group">
+                <span class="icon-container"><i class="fa-solid fa-gear"></i></span>
+                <div class="group-title">Immersive Settings</div>
+                <div class="group-subtitle">Experience games in thematic venues that transport you into the story.</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="events-container">
+        <div class="events-header">
+            <div class="events-title">Upcoming Sessions</div>
+            <div class="navigation-arrows">
+                <button class="nav-arrow" (click)="scrollLeft()">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <button class="nav-arrow" (click)="scrollRight()">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+        <div class="event-list" #eventList (touchstart)="handleTouchStart($event)" (touchend)="handleTouchEnd($event)">
+            <div class="event-card" *ngFor="let session of eventService.upcomingEvent$ | async"
+                (click)="navigateToEventDetail(session.event.eventId)">
+                <div class="event-image">
+                    <img [src]="session.event.imgUrl" alt="event image">
+                </div>
+                <div class="event-details">
+                    <div class="event-title">{{session.event.name}}</div>
+                    <div class="event-game">{{session.game.name}}</div>
+                    <div class="info" *ngIf="session">
+                     <div class="event-date"><i class="fa-regular fa-clock"></i> {{session.startDate | date:'MMM dd - h:mm a':'UTC+1'}}</div>
+                     <div class="event-duration"><i class="fa-solid fa-hourglass-end"></i> {{ session.startDate |
+                            duration: session.endDate }}
+                        </div>
+                    </div>
+                    @if (session.master){
+                    <div class="display-admin">
+                        @if(session.master.imgUrl){
+                        <img [src]="session.master.imgUrl">
+                        }
+                        @else {
+                        <div class="user-icon">
+                            <i class="fa-regular fa-user"></i>
+                        </div>
+                        }
+                        <span *ngIf="session">{{session.master!.name}}</span>
+                    </div>
+                    }@else {
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="btn-all" (click)="navigateToEvent()">See All <i class="fa-solid fa-angle-right"></i></div>
+    </div>
+
+
+    <div class="logo-container">
+        <div class="logo-slider">
+            <img src="/assets/images/logo/DnDLogo.png" alt="Logo 1">
+            <img src="/assets/images/logo/forbiddenlogo.png" alt="Logo 2">
+            <img src="/assets/images/logo/motwlogo.png" alt="Logo 3">
+            <img src="/assets/images/logo/pathfinderlogo.png" alt="Logo 4">
+            <img src="/assets/images/logo/shadowrunlogo.png" alt="Logo 5">
+
+            <img src="/assets/images/logo/DnDLogo.png" alt="Logo 1">
+            <img src="/assets/images/logo/forbiddenlogo.png" alt="Logo 2">
+            <img src="/assets/images/logo/motwlogo.png" alt="Logo 3">
+            <img src="/assets/images/logo/pathfinderlogo.png" alt="Logo 4">
+            <img src="/assets/images/logo/shadowrunlogo.png" alt="Logo 5">
+
+            <img src="/assets/images/logo/DnDLogo.png" alt="Logo 1">
+            <img src="/assets/images/logo/forbiddenlogo.png" alt="Logo 2">
+            <img src="/assets/images/logo/motwlogo.png" alt="Logo 3">
+            <img src="/assets/images/logo/pathfinderlogo.png" alt="Logo 4">
+            <img src="/assets/images/logo/shadowrunlogo.png" alt="Logo 5">
+        </div>
+    </div>
+</div>

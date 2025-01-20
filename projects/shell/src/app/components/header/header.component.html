@@ -1,0 +1,145 @@
+<div class="header-container">
+    <div class="right-img" (click)="this.router.navigate(['home'])" #containerImg>
+        <img src="/assets/images/logo.png">
+        <div class="logo-title" #title>
+            Game Planner
+        </div>
+    </div>
+
+    <div class="navigate">
+        
+        <div class="section" routerLink="/subscription" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            mfe</div>
+        <div class="section" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Home</div>
+        <div class="section" routerLink="/events" routerLinkActive="active">
+            Events</div>
+        <div class="section" routerLink="/mobile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Mobile</div>
+    </div>
+
+    <div class="auth-container">
+        <ng-container *ngIf="!this.as.isLogged; else loggedIn">
+            <div class="login-registration-cont">
+                <div class="login-registration login" routerLink="/login">Log In</div>
+                <div class="login-registration" routerLink="/register">Sign Up</div>
+            </div>
+        </ng-container>
+        <ng-template #loggedIn>
+            <div class="user-icon" (click)="toggleModal()">
+                @if (this.user?.imgUrl) {
+                <img class="img" src="{{this.user?.imgUrl}}" alt="User Profile image">
+                }
+                @else {
+                <i class="fa-regular fa-user"></i>
+                }
+            </div>
+        </ng-template>
+    </div>
+    <div class="bars-container" (click)="mobileMenu(true)">
+        <i class="fa-solid fa-bars"></i>
+    </div>
+    @if (this.as.isLogged)
+    {
+    <div *ngIf="this.headerService.isModalOpen" #overlayElement class="overlay" (click)="closeModal()"></div>
+    <div class="menu-container" *ngIf="this.headerService.isModalOpen" (click)="$event.stopPropagation()">
+        <div *ngIf="this.user" class="img-name">
+            @if(this.user.imgUrl === null || this.user.imgUrl === ""){
+            <div class="img-name-border"> <i class="fa-regular fa-user"></i></div>
+            }@else {
+            <img class="img" [src]="this.user.imgUrl" alt="User profile img">
+            }
+            <div class="username-email">
+                <div class="username">{{this.user.name}} {{this.user.surname}}</div>
+                <div class="email">{{this.user.email}}</div>
+            </div>
+        </div>
+        <div class="divisor"></div>
+        <div class="options-container" #modalElement>
+            <div class="settings-cont" *ngIf="this.as.isAdmin" (click)="navigateDashboardAdmin()">
+
+                <div><i class="fa-solid fa-user-tie"></i></div>
+                <div class="settings">Dashboard Admin</div>
+            </div>
+            <div class="settings-cont" (click)="navigateAndClose()">
+                <div><i class="fa-solid fa-gear"></i></div>
+                <div class="settings">Account Settings</div>
+            </div>
+            <div class="settings-cont red">
+                <div><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+                <div (click)="logOut()">logout</div>
+            </div>
+        </div>
+    </div>
+    }
+    <div class="mobile-menu" [ngClass]="{'open': headerService.isMobileMenuOpen}">
+
+        <!-- <div class="logo-mobile">
+            <div class="logo-text-mobile"><img src="/assets/images/logo.png" alt="logo">
+                <div class="logo-title">
+                    Game Planner
+                </div>
+            </div>
+        </div>-->
+
+        <div class="close-header" (click)="mobileMenu(false)">
+            <i class="fa-solid fa-xmark"></i>
+        </div>
+
+        <div>
+            <div class="menu-item" routerLink="home" routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }" (click)="mobileMenu(false)"><i
+                    class="fa-solid fa-house"></i> Home</div>
+            <div class="menu-item" routerLink="events" routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }" (click)="mobileMenu(false)"><i
+                    class="fa-solid fa-calendar"></i> Events</div>
+            <div class="menu-item" routerLink="mobile" routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }" (click)="mobileMenu(false)"><i
+                    class="fa-solid fa-mobile-screen-button"></i> Mobile</div>
+        </div>
+
+        <div class="mobile-auth" [class.center]="this.as.isLogged">
+            <div class="login-registration-cont buttons-mobile" *ngIf="!this.as.isLogged">
+                <div class="login-registration login btn-mobile" (click)="navigateLogin(true)">Log In</div>
+                <div class="login-registration btn-mobile" (click)="navigateLogin(false)">Sign Up</div>
+            </div>
+
+            <div class="user" *ngIf="this.as.isLogged && this.user">
+                <div class="img-name-mobile">
+                    @if(this.user.imgUrl==undefined){
+                    <div style="cursor: pointer;" class="img-name-border" (click)="navigateUserSettings()"> <i class="fa-regular fa-user"></i></div>
+                    }
+                    @else {
+                    <img style="cursor: pointer;" class="img" [src]="this.user!.imgUrl" alt="User Profile image" (click)="navigateUserSettings()">
+                    }
+                    <div class="username-email-mobile">
+                        <div class="username">{{this.user.name}} {{this.user.surname}}</div>
+                        <div class="email">{{this.user.email}}</div>
+                    </div>
+                </div>
+                <div class="divisor"></div>
+
+                <div class="options-container cont-mobile" #modalElement>
+
+                    <div class="settings-cont mobile-font" *ngIf="this.as.isAdmin" (click)="navigateDashboardAdmin()">
+
+                        <div><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="settings">Dashboard Admin</div>
+                    </div>
+                    <div class="settings-cont mobile-font" (click)="navigateAndClose()">
+
+                        <div><i class="fa-solid fa-gear"></i></div>
+                        <div class="settings">Account Settings</div>
+                    </div>
+                    <div class="settings-cont red mobile-font">
+                        <div><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+                        <div (click)="logOut()">logout</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
