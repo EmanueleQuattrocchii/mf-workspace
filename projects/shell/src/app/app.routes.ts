@@ -19,6 +19,7 @@ import { CreateEventComponent } from './components/admin/events-admin/create-eve
 import { AuthGuardService } from './services/guards/auth-guard.service';
 import { AdminGuardService } from './services/guards/admin-guard.service';
 import { loadRemoteModule } from '@angular-architects/native-federation';
+import { SchedulerComponent } from './components/scheduler/scheduler.component';
 
 export const routes: Routes = [
   {
@@ -30,7 +31,8 @@ export const routes: Routes = [
       { path: 'userSettings', component: UserProfileComponent,canActivate: [AuthGuardService]},
       { path: 'events',component: EventsComponent},
       { path: 'events/:id', component: EventDetailComponent },
-      { path: 'mobile', component: MobileComponent }
+      { path: 'mobile', component: MobileComponent },
+      { path: 'scheduler', component: SchedulerComponent }
     ]
     },
     {

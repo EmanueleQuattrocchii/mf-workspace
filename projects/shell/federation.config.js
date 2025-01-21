@@ -2,17 +2,15 @@ const { withNativeFederation, shareAll } = require('@angular-architects/native-f
 
 module.exports = withNativeFederation({
 
-  shared: {
-    ...shareAll({ singleton: true, strictVersion: true, requiredVersion: 'auto' }),
+  name: 'shell', // Nome del progetto
+  exposes: {
+    './MfeService': './projects/shell/src/app/services/mfe.service.ts',
   },
-
-  skip: [
-    'rxjs/ajax',
-    'rxjs/fetch',
-    'rxjs/testing',
-    'rxjs/webSocket',
-    // Add further packages you don't need at runtime
-  ]
+ 
+  shared: ['@angular/core', '@angular/common', '@angular/router', '@angular/forms'],
+ 
+  filename: 'remoteEntry.js',
+  port: 4200,
 
   // Please read our FAQ about sharing libs:
   // https://shorturl.at/jmzH0
