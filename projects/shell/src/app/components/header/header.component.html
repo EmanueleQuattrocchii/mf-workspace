@@ -7,7 +7,8 @@
     </div>
 
     <div class="navigate">
-        <div class="section" routerLink="/scheduler" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <div class="section" routerLink="/scheduler" routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
             Scheduler</div>
         <div class="section" routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             Home</div>
@@ -15,6 +16,8 @@
             Events</div>
         <div class="section" routerLink="/mobile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             Mobile</div>
+        <div class="section" routerLink="/chat" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Chat</div>
     </div>
 
     <div class="auth-container">
@@ -106,10 +109,12 @@
             <div class="user" *ngIf="this.as.isLogged && this.user">
                 <div class="img-name-mobile">
                     @if(this.user.imgUrl==undefined){
-                    <div style="cursor: pointer;" class="img-name-border" (click)="navigateUserSettings()"> <i class="fa-regular fa-user"></i></div>
+                    <div style="cursor: pointer;" class="img-name-border" (click)="navigateUserSettings()"> <i
+                            class="fa-regular fa-user"></i></div>
                     }
                     @else {
-                    <img style="cursor: pointer;" class="img" [src]="this.user!.imgUrl" alt="User Profile image" (click)="navigateUserSettings()">
+                    <img style="cursor: pointer;" class="img" [src]="this.user!.imgUrl" alt="User Profile image"
+                        (click)="navigateUserSettings()">
                     }
                     <div class="username-email-mobile">
                         <div class="username">{{this.user.name}} {{this.user.surname}}</div>
