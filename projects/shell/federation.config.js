@@ -4,7 +4,7 @@ module.exports = withNativeFederation({
 
   name: 'shell', // Nome del progetto
   exposes: {
-    './MfeService': './projects/shell/src/app/services/mfe.service.ts',
+    // './MfeService': './projects/shell/src/app/services/mfe.service.ts',
   },
  
   shared: ['@angular/core', '@angular/common', '@angular/router', '@angular/forms'],

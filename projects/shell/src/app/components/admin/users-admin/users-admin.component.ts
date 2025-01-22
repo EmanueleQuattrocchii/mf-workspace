@@ -39,7 +39,7 @@ export class UsersAdminComponent implements OnInit, AfterViewInit, OnDestroy {
   death$ = new Subject<void>();
 
 
-  constructor(public ds: DashboardService, public headerService: HeaderService, public as: AdminService, private gn: GeneralService, public uas: UserAdminService) { }
+  constructor(public ds: DashboardService, public headerService: HeaderService, public as: AdminService, private router: Router, private gn: GeneralService, public uas: UserAdminService) { }
 
 
   displayedColumns: string[] = ['user', 'email','phoneNumber',  'role']; 

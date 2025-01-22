@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -12,22 +13,17 @@ import { EventModel } from '../../../models/event.model';
 import { DashboardService } from '../../../services/dashboard.service';
 import { EventService } from '../../../services/event.service';
 import { GeneralService } from '../../../services/general.service';
-import { MatChipsModule } from '@angular/material/chips';
 
 @Component({
   selector: 'app-events-admin',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    MatTableModule,
+  imports: [CommonModule,FormsModule,MatTableModule,
     MatSortModule,
     MatFormFieldModule,
     MatInputModule,
     MatChipsModule,
     MatIconModule,
-    MatPaginator
-  ],
+    MatPaginator],
   templateUrl: './events-admin.component.html',
   styleUrl: './events-admin.component.scss'
 })
