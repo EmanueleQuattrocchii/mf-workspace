@@ -32,7 +32,7 @@ export const routes: Routes = [
       { path: 'events',component: EventsComponent},
       { path: 'events/:id', component: EventDetailComponent },
       { path: 'mobile', component: MobileComponent },
-      { path: 'scheduler', component: SchedulerComponent }
+      { path: 'scheduler', component: SchedulerComponent,canActivate: [AuthGuardService]}
     ]
     },
     {

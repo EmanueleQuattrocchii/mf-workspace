@@ -6,18 +6,62 @@ import { gameSessionModel } from '../models/gameSession.model';
 import { reservationModel } from '../models/reservation.model';
 import { GeneralService } from './general.service';
 import { Operation } from 'rfc6902';
+import { BehaviorSubject, catchError, map, Observable, throwError } from 'rxjs';
+import { ODataResponse } from '../models/odataResponse.model';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class SessionService {
 
-    constructor(private http: HttpClient,private gn: GeneralService) { }
+    constructor(private http: HttpClient, private gn: GeneralService) { }
 
-    sessionDetail : gameSessionModel | undefined;
+    sessionDetail: gameSessionModel | undefined;
     reservationDetail: reservationModel | undefined;
+    UserEventSessions$ = new BehaviorSubject<gameSessionModel[]>([]);
 
-   getSessionById(id: number) : Promise<any> {
+    getSessionsOfUser(userId: string): Promise<any> {
+        return new Promise((resolve, reject) => {
+            // Costruisci la query corretta con encoding dei parametri
+            const filterQuery = `$expand=Game,Reservations&$filter=Reservations/any(r: r/UserId eq '${encodeURIComponent(userId)}')`;
+    
+            // Esegui la richiesta HTTP GET
+            this.http.get<any>(`${environment.apiUrl}odata/Session?${filterQuery}`).subscribe({
+                next: (res) => {
+                    console.log(res);
+                    // Aggiorna l'oggetto UserEventSessions$
+                    this.UserEventSessions$.next(res.value);
+                    resolve(res.value);
+                },
+                error: (err) => {
+                    // Log dell'errore per debug
+                    console.error('Error fetching sessions:', err);
+                    reject(err);
+                }
+            });
+        });
+    }
+
+    getFilteredSessionsOfUser(eventName: string, userId: string): Observable<ODataResponse<gameSessionModel>> {
+        // Costruisci la query OData corretta con encoding dei parametri
+        const filterQuery = `$expand=Game,Reservations&$filter=Reservations/any(r: r/UserId eq '${encodeURIComponent(userId)}') and Game/Name eq '${encodeURIComponent(eventName)}'`;
+        
+        // Esegui la richiesta HTTP GET con la query filtrata
+        return this.http.get<ODataResponse<gameSessionModel>>(`${environment.apiUrl}odata/Session?${filterQuery}`).pipe(
+            map((res: ODataResponse<gameSessionModel>) => {
+                // Aggiorna l'oggetto UserEventSessions$
+                this.UserEventSessions$.next(res.value);
+                return res;
+            }),
+            catchError((err) => {
+                // Gestione degli errori e log
+                console.error('Error fetching filtered sessions:', err);
+                return throwError(() => new Error('Error fetching filtered sessions.'));
+            })
+        );
+    }
+    
+    getSessionById(id: number): Promise<any> {
         return new Promise((resolve, reject) => {
             this.http.get<any>(`${environment.apiUrl}odata/Session?$expand=Game,Reservations&$filter=sessionId eq ${id}`).subscribe({
                 next: (res) => {
@@ -32,7 +76,7 @@ export class SessionService {
         });
     }
 
-    getReservationById(id: number) : Promise<any> {
+    getReservationById(id: number): Promise<any> {
         return new Promise((resolve, reject) => {
             this.http.get<any>(`${environment.apiUrl}odata/Reservation?$expand=Session($expand=Game)&$filter=reservationId eq ${id}`).subscribe({
                 next: (res) => {
@@ -47,16 +91,16 @@ export class SessionService {
         });
     }
 
-    confirmRegistration(sessionId: number, userId: string, token: string){
+    confirmRegistration(sessionId: number, userId: string, token: string) {
         return new Promise((resolve, reject) => {
             this.http.put<any>(`${environment.apiUrl}api/Reservation/confirm?sessionId=${sessionId}&userId=${userId}&token=${token}`, '').subscribe({
                 next: (res) => {
-                    this.gn.confirmMessage='Registration confirmed';
+                    this.gn.confirmMessage = 'Registration confirmed';
                     this.gn.setConfirm();
                     resolve(res);
                 },
                 error: (err) => {
-                    this.gn.errorMessage='Error, please try again later';
+                    this.gn.errorMessage = 'Error, please try again later';
                     this.gn.setError();
                     reject(err);
                 }
@@ -68,13 +112,13 @@ export class SessionService {
         return new Promise((resolve, reject) => {
             this.http.delete<any>(`${environment.apiUrl}api/Reservation?id=${reservationId}`).subscribe({
                 next: (res) => {
-                    this.gn.confirmMessage='Registration removed';
+                    this.gn.confirmMessage = 'Registration removed';
                     this.gn.setConfirm();
                     resolve(res);
                 },
                 error: (err) => {
                     console.error(err);
-                    this.gn.errorMessage='Error, please try again later';
+                    this.gn.errorMessage = 'Error, please try again later';
                     this.gn.setError();
                     reject(err);
                 }
@@ -82,17 +126,17 @@ export class SessionService {
         });
     }
 
-    newConfirm(sessionId: number,userId: string) : Promise<any>{
+    newConfirm(sessionId: number, userId: string): Promise<any> {
         return new Promise((resolve, reject) => {
             this.http.post<any>(`${environment.apiUrl}api/Reservation/new-confirm-email?sessionId=${sessionId}&userId=${userId}`, '').subscribe({
                 next: (res) => {
-                    this.gn.errorMessage='Error, a new confirmation email has been sent';
+                    this.gn.errorMessage = 'Error, a new confirmation email has been sent';
                     this.gn.setError();
                     resolve(res);
                 },
                 error: (err) => {
                     console.error(err);
-                    this.gn.errorMessage='Error, please try again later';
+                    this.gn.errorMessage = 'Error, please try again later';
                     this.gn.setError();
                     reject(err);
                 }
@@ -100,17 +144,17 @@ export class SessionService {
         });
     }
 
-    addSession(session: gameSessionModel) : Promise<any> {
+    addSession(session: gameSessionModel): Promise<any> {
         return new Promise((resolve, reject) => {
             this.http.post<any>(`${environment.apiUrl}api/Session`, session).subscribe({
                 next: (res) => {
-                    this.gn.confirmMessage='Session created';
+                    this.gn.confirmMessage = 'Session created';
                     this.gn.setConfirm();
                     resolve(res);
                 },
                 error: (err) => {
                     console.error(err);
-                    this.gn.errorMessage='Error, please try again later';
+                    this.gn.errorMessage = 'Error, please try again later';
                     this.gn.setError();
                     reject(err);
                 }
@@ -118,7 +162,7 @@ export class SessionService {
         });
     }
 
-    addSessionNoNoti(session: any) : Promise<any> {
+    addSessionNoNoti(session: any): Promise<any> {
         return new Promise((resolve, reject) => {
             this.http.post<any>(`${environment.apiUrl}api/Session`, session).subscribe({
                 next: (res) => {
@@ -136,7 +180,7 @@ export class SessionService {
         });
     }
 
-    updateSession(sessionId: number, patch: Operation[]) : Promise<any> {
+    updateSession(sessionId: number, patch: Operation[]): Promise<any> {
         return new Promise((resolve, reject) => {
             this.http.patch<any>(`${environment.apiUrl}api/Session/${sessionId}`, patch).subscribe({
                 next: (res) => {
@@ -154,7 +198,7 @@ export class SessionService {
         });
     }
 
-    deleteSession(sessionId: number) : Promise<any> {
+    deleteSession(sessionId: number): Promise<any> {
         return new Promise((resolve, reject) => {
             this.http.delete<any>(`${environment.apiUrl}api/Session/${sessionId}`).subscribe({
                 next: (res) => {
