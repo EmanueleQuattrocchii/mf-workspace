@@ -16,7 +16,8 @@
             Events</div>
         <div class="section" routerLink="/mobile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
             Mobile</div>
-        <div class="section" routerLink="/chat" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <div *ngIf="IsLoggedAndRegistred()" class="section" routerLink="/chat" routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
             Chat</div>
     </div>
 

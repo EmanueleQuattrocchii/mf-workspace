@@ -2,11 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink, RouterModule } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
-import { HeaderService } from '../../services/header.service';
 import { GeneralService } from '../../services/general.service';
-import { Subject, takeUntil } from 'rxjs';
+import { HeaderService } from '../../services/header.service';
 
 @Component({
   selector: 'app-header',
@@ -15,9 +15,10 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
-export class HeaderComponent implements OnInit,OnDestroy {
+export class HeaderComponent implements OnInit, OnDestroy {
 
-  constructor(public headerService: HeaderService, public router: Router, private elementRef: ElementRef, public as: AuthService,private gn: GeneralService) { }
+
+  constructor(public headerService: HeaderService, public router: Router, private elementRef: ElementRef, public as: AuthService, private gn: GeneralService) { }
 
   @ViewChild('modalElement') modalElement!: ElementRef;
   @ViewChild('overlayElement') overlayElement!: ElementRef;
@@ -26,6 +27,13 @@ export class HeaderComponent implements OnInit,OnDestroy {
 
   user: User | undefined;
   destroy$ = new Subject<void>();
+
+  IsLoggedAndRegistred(): boolean {
+    if (!this.as.isLogged) {
+      return false;
+    }
+    return true;
+  }
 
   logOut() {
     this.as.logout();
@@ -42,14 +50,14 @@ export class HeaderComponent implements OnInit,OnDestroy {
 
     this.as.user?.subscribe({
       next: (response) => {
-        if(response){
+        if (response) {
           this.user = response;
         }
       }
     })
     this.headerService.headerTitle$.pipe(takeUntil(this.destroy$)).subscribe((bool) => {
       setTimeout(() => {
-        if(bool && this.router.url === '/events'){  
+        if (bool && this.router.url === '/events') {
           if (this.titleElement && this.isMobile()) {
             (this.titleElement.nativeElement as HTMLElement).style.display = 'none';
             if (this.containerImgElement) {
@@ -57,7 +65,7 @@ export class HeaderComponent implements OnInit,OnDestroy {
             }
           }
         }
-        else{
+        else {
           if (this.titleElement) {
             (this.titleElement.nativeElement as HTMLElement).style.display = 'flex';
           }
@@ -89,7 +97,7 @@ export class HeaderComponent implements OnInit,OnDestroy {
   }
 
   navigateAndClose() {
-    if(this.headerService.isMobileMenuOpen){
+    if (this.headerService.isMobileMenuOpen) {
       this.headerService.isMobileMenuOpen = false;
     }
     this.headerService.isModalOpen = false;
@@ -137,17 +145,17 @@ export class HeaderComponent implements OnInit,OnDestroy {
   }
 
   mobileMenu(status: boolean) {
-    if(status){
+    if (status) {
       this.headerService.isMobileMenuOpen = true;
       this.gn.isOverlayOn$.next(true);
     }
-    else{
+    else {
       this.headerService.isMobileMenuOpen = false;
       this.gn.isOverlayOn$.next(false);
     }
   }
 
-  navigateUserSettings(){
+  navigateUserSettings() {
     this.headerService.isMobileMenuOpen = false;
     this.headerService.isModalOpen = false;
     this.gn.isOverlayOn$.next(false);
@@ -161,17 +169,17 @@ export class HeaderComponent implements OnInit,OnDestroy {
   }
 
   navigateLogin(status: boolean) {
-    if(status){
+    if (status) {
       this.headerService.isMobileMenuOpen = false;
       this.gn.isOverlayOn$.next(false);
       this.router.navigate(['login']);
     }
-    else{
+    else {
       this.headerService.isMobileMenuOpen = false;
       this.gn.isOverlayOn$.next(false);
       this.router.navigate(['register']);
     }
 
   }
-    
+
 }

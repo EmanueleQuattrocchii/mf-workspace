@@ -34,7 +34,7 @@ export const routes: Routes = [
       { path: 'events/:id', component: EventDetailComponent },
       { path: 'mobile', component: MobileComponent },
       { path: 'scheduler', component: SchedulerComponent },
-      { path: 'chat', component: SessionChatComponent }
+      { path: 'chat', component: SessionChatComponent, canActivate: [AuthGuardService] }
     ]
   },
   {
