@@ -40,13 +40,13 @@ export class SessionChatComponent implements OnInit {
 
     // Aggiungi un listener per i messaggi ricevuti
     this.ss['connection'].on('ReceiveMessage', (id: string, sender: string, text: string, timeStamp: Date, isRead: boolean) => {
-      console.log("Qui ricevo: ", id, sender, text, timeStamp, isRead);
+      console.log("Ricevo: ", id, sender, text, timeStamp, isRead);
       this.messages.push({ id, sender, text, timeStamp, isRead });
     });
   }
   sendMessage(): void {
     if (this.message.trim()) {
-      console.log('Qui mando: ', this.message);
+      console.log('Mando: ', this.message);
       this.ss.sendMessage(this.user!.name, this.message);
       this.message = '';
     }
