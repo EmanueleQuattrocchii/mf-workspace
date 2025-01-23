@@ -1,76 +1,56 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import * as signalR from '@microsoft/signalr';
+import { User } from '../../models/user.model';
+import { AuthService } from '../../services/auth.service';
 import { SignalRService } from '../../services/signalr.service';
 interface Message {
   id: string;
   sender: string;
   text: string;
-  timestamp: Date;
+  timeStamp: Date;
   isRead: boolean;
 }
 @Component({
   selector: 'app-session-chat',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './session-chat.component.html',
   styleUrl: './session-chat.component.scss'
 })
 export class SessionChatComponent implements OnInit {
-  private hubConnection!: signalR.HubConnection;
-  
-  sessionName = signal('Conversazione di Gruppo');
-  currentUser = signal('Mario');
-  messages = signal<Message[]>([]);
-  newMessage = signal('');
 
-  constructor(public ss: SignalRService) {
-   this.ss.SignalRConnection();
+  private hubConnection!: signalR.HubConnection;
+  user: User | undefined
+  public message = '';
+  public messages: Message[] = [];
+
+  constructor(private ss: SignalRService, private us: AuthService) {
+    this.us.user.subscribe(user => {
+      if (user) {
+        this.user = user;
+      }
+    });
   }
 
   ngOnInit(): void {
-  }
 
-  private setupSignalRListeners(): void {
-    this.hubConnection.on('ReceiveMessage', (message: Message) => {
-      this.messages.update(msgs => [...msgs, message]);
+    this.ss.startConnection();
+
+    // Aggiungi un listener per i messaggi ricevuti
+    this.ss['connection'].on('ReceiveMessage', (id: string, sender: string, text: string, timeStamp: Date, isRead: boolean) => {
+      console.log("Qui ricevo: ", id, sender, text, timeStamp, isRead);
+      this.messages.push({ id, sender, text, timeStamp, isRead });
     });
-
-    this.hubConnection.on('MessageRead', (messageId: string, readBy: string) => {
-      this.messages.update(msgs => 
-        msgs.map(m => 
-          m.id === messageId ? {...m, isRead: true} : m
-        )
-      );
-    });
-
-    this.hubConnection.start()
-      .catch(err => console.error('SignalR connection error:', err));
   }
-
   sendMessage(): void {
-    const messageText = this.newMessage();
-    if (messageText.trim()) {
-      const message: Message = {
-        id: this.generateUniqueId(),
-        sender: this.currentUser(),
-        text: messageText,
-        timestamp: new Date(),
-        isRead: false
-      };
-
-      // Invia tramite SignalR
-      this.hubConnection.invoke('SendMessage', message)
-        .catch(err => console.error('Errore invio messaggio:', err));
-
-      this.messages.update(msgs => [...msgs, message]);
-      this.newMessage.set('');
+    if (this.message.trim()) {
+      console.log('Qui mando: ', this.message);
+      this.ss.sendMessage(this.user!.name, this.message);
+      this.message = '';
     }
   }
 
-  private generateUniqueId(): string {
-    return Math.random().toString(36).substring(2, 15) + 
-           Math.random().toString(36).substring(2, 15);
-  }
+
 }

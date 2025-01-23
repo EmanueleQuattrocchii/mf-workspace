@@ -1,32 +1,26 @@
-<div class="chat-container">
+<div class="background-image">
   <div class="chat-header">
-    <h2>{{ sessionName() }}</h2>
+    <p>Session <span class="custom-text">chat</span></p>
   </div>
 
-  <div class="chat-messages">
-    <div 
-      *ngFor="let msg of messages()" 
-      class="message" 
-      [ngClass]="{'own-message': msg.sender === currentUser()}">
-      <strong>{{ msg.sender }}</strong>
-      <p>{{ msg.text }}</p>
-      <div class="message-footer">
-        <small>{{ msg.timestamp | date:'HH:mm' }}</small>
-        <span class="read-status">
-          <i class="checkmark" *ngIf="msg.isRead">✓✓</i>
-          <i class="checkmark" *ngIf="!msg.isRead">✓</i>
-        </span>
+  <div class="chat-container">
+    <div class="chat-messages">
+      <div *ngFor="let msg of messages" class="message">
+        <strong>{{ msg.id }}</strong>
+        <p>{{ msg.sender }}</p>
+        <div class="message-footer">
+          <small>{{ msg.timeStamp| date:'HH:mm' }}</small>
+          <span class="read-status">
+            <i class="checkmark" *ngIf="msg.isRead">✓✓</i>
+            <i class="checkmark" *ngIf="!msg.isRead">✓</i>
+          </span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="chat-input">
-    <input 
-      [ngModel]="newMessage()" 
-      (ngModelChange)="newMessage.set($event)"
-      (keyup.enter)="sendMessage()"
-      placeholder="Scrivi un messaggio..."
-    >
-    <button (click)="sendMessage()">Invia</button>
+    <div class="chat-input">
+      <input [(ngModel)]="message" placeholder="Enter your message..." (keydown.enter)="sendMessage()">
+      <button (click)="sendMessage()">Send</button>
+    </div>
   </div>
 </div>
