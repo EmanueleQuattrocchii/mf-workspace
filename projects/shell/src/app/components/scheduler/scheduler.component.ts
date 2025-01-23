@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
 import { gameSessionModel } from '../../models/gameSession.model';
 import { SessionService } from '../../services/session.service';
 import { AuthService } from '../../services/auth.service';
 import { FormsModule } from '@angular/forms';
+import { EventModel } from '../../models/event.model';
+import { GeneralService } from '../../services/general.service';
 
 @Component({
   selector: 'app-scheduler',
@@ -16,7 +18,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class SchedulerComponent implements OnInit {
 
-  constructor(private router: Router, public sessionService: SessionService, public as: AuthService) { }
+  constructor(private router: Router, public sessionService: SessionService, private gn: GeneralService, public as: AuthService) { }
 
   @Input() isScrolled = false;
 
@@ -27,8 +29,10 @@ export class SchedulerComponent implements OnInit {
   userInput: string = '';
   destroy$ = new Subject<void>();
   searchTerms = new Subject<string>();
-  filteredEventSessions: gameSessionModel[] = [];
   foundedDays: Array<Date> = [];
+
+  EventSessions: gameSessionModel[] = [];
+  filteredEventSessions: gameSessionModel[] = [];
 
   userId: string = "";
 
@@ -37,21 +41,32 @@ export class SchedulerComponent implements OnInit {
     this.sessionService.getSessionsOfUser(this.userId);
     this.getDates();
 
+    this.sessionService.getSessionsOfUser(this.userId).subscribe({
+      next: (res) => {
+        this.EventSessions = JSON.parse(JSON.stringify(res.value));
+      },
+      error: (err) => {
+        console.error('Error:', err);
+      }
+    });
+
+
     this.searchTerms.pipe(
       debounceTime(500),
       distinctUntilChanged(),
       switchMap(term => {
         if (term === '') {
-          setTimeout(() => {
-            this.userId = this.as.getUserId() ?? '';
-            this.sessionService.getSessionsOfUser(this.userId);
-          }, 10);
+          return of(this.EventSessions);
+        } else {
+          const filteredSessions = this.EventSessions.filter(session => {
+            return session.event?.name && session.event?.name.toLowerCase().startsWith(term.toLowerCase());
+          });
+          return of(filteredSessions);
         }
-        return this.sessionService.getFilteredSessionsOfUser(term, this.userId);
       }),
       takeUntil(this.destroy$)
     ).subscribe(res => {
-      this.filteredEventSessions = res.value;
+      this.filteredEventSessions = JSON.parse(JSON.stringify(res));
       this.updateDates();
     });
   }
@@ -123,7 +138,8 @@ export class SchedulerComponent implements OnInit {
   //   });
   // }
 
-  goToEventDetail(eventId: number) {
+  goToEventDetail(eventId: number, event: EventModel) {
+    this.gn.eventDetail = JSON.parse(JSON.stringify(event));
     this.router.navigate(['/events/', eventId]);
   }
 
@@ -153,4 +169,10 @@ export class SchedulerComponent implements OnInit {
     return `${day}/${month}/${year}`;
   }
 
+  hasEventsForDay(EventSessions: any[], day: Date): boolean {
+    return EventSessions.some(eventSession => 
+      this.formatDate(eventSession.startDate) === this.formatDate(day)
+    );
+  }
+  
 }

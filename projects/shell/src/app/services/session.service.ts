@@ -18,43 +18,35 @@ export class SessionService {
 
     sessionDetail: gameSessionModel | undefined;
     reservationDetail: reservationModel | undefined;
-    UserEventSessions$ = new BehaviorSubject<gameSessionModel[]>([]);
+    // UserEventSessions$ = new BehaviorSubject<gameSessionModel[]>([]);
 
-    getSessionsOfUser(userId: string): Promise<any> {
-        return new Promise((resolve, reject) => {
-            // Costruisci la query corretta con encoding dei parametri
-            const filterQuery = `$expand=Game,Reservations&$filter=Reservations/any(r: r/UserId eq '${encodeURIComponent(userId)}')`;
+    // getSessionsOfUser2(userId: string): Promise<any> {
+    //     return new Promise((resolve, reject) => {
+    //         // Costruisci la query corretta con encoding dei parametri
+    //         const filterQuery = `$expand=Game,Reservations,Event&$filter=Reservations/any(r: r/UserId eq '${encodeURIComponent(userId)}')`;
     
-            // Esegui la richiesta HTTP GET
-            this.http.get<any>(`${environment.apiUrl}odata/Session?${filterQuery}`).subscribe({
-                next: (res) => {
-                    console.log(res);
-                    // Aggiorna l'oggetto UserEventSessions$
-                    this.UserEventSessions$.next(res.value);
-                    resolve(res.value);
-                },
-                error: (err) => {
-                    // Log dell'errore per debug
-                    console.error('Error fetching sessions:', err);
-                    reject(err);
-                }
-            });
-        });
-    }
+    //         // Esegui la richiesta HTTP GET
+    //         this.http.get<any>(`${environment.apiUrl}odata/Session?${filterQuery}`).subscribe({
+    //             next: (res) => {
+    //                 resolve(res.value);
+    //             },
+    //             error: (err) => {
+    //                 // Log dell'errore per debug
+    //                 console.error('Error fetching sessions:', err);
+    //                 reject(err);
+    //             }
+    //         });
+    //     });
+    // }
 
-    getFilteredSessionsOfUser(eventName: string, userId: string): Observable<ODataResponse<gameSessionModel>> {
-        // Costruisci la query OData corretta con encoding dei parametri
-        const filterQuery = `$expand=Game,Reservations&$filter=Reservations/any(r: r/UserId eq '${encodeURIComponent(userId)}') and Game/Name eq '${encodeURIComponent(eventName)}'`;
+    getSessionsOfUser(userId: string): Observable<ODataResponse<gameSessionModel>> {
+        const filterQuery = `$expand=Game,Reservations,Event($expand=Sessions($expand=Master,Game,Reservations),AdminUser)&$filter=Reservations/any(r: r/UserId eq '${encodeURIComponent(userId)}')`;
         
-        // Esegui la richiesta HTTP GET con la query filtrata
         return this.http.get<ODataResponse<gameSessionModel>>(`${environment.apiUrl}odata/Session?${filterQuery}`).pipe(
             map((res: ODataResponse<gameSessionModel>) => {
-                // Aggiorna l'oggetto UserEventSessions$
-                this.UserEventSessions$.next(res.value);
                 return res;
             }),
             catchError((err) => {
-                // Gestione degli errori e log
                 console.error('Error fetching filtered sessions:', err);
                 return throwError(() => new Error('Error fetching filtered sessions.'));
             })

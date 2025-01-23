@@ -4,7 +4,6 @@
         <div class="search-bar" id="search-bar">
             <div class="icon-container">
                 <input type="text" placeholder="Search events..." (input)="onSearch($event)" [(ngModel)]="userInput">
-                <!-- [(ngModel)]="userInput" -->
                 <i class="fa-solid fa-magnifying-glass"></i>
             </div>
         </div>
@@ -12,15 +11,6 @@
     <div class="container-fluid">
         <header>
             <h4 class="display-4 mb-4 text-center">Calendar</h4>
-            <!-- <div class="row d-none d-sm-flex p-1 bg-dark text-white">
-                <h5 class="col-sm p-1 text-center">Monday</h5>
-                <h5 class="col-sm p-1 text-center">Tuesday</h5>
-                <h5 class="col-sm p-1 text-center">Wednesday</h5>
-                <h5 class="col-sm p-1 text-center">Thursday</h5>
-                <h5 class="col-sm p-1 text-center">Friday</h5>
-                <h5 class="col-sm p-1 text-center">Saturday</h5>
-                <h5 class="col-sm p-1 text-center">Sunday</h5>
-            </div> -->
         </header>
         @if(userInput.length === 0){
         <div class="row border border-right-0 border-bottom-0">
@@ -32,17 +22,31 @@
                     <small class="col d-sm-none text-muted"> {{ getDayOfWeekString(day) }} </small>
                     <span class="col-1"></span>
                 </h5>
-                @if (this.sessionService.UserEventSessions$.value != []) {
-                    @for (eventSession of this.sessionService.UserEventSessions$.value; track $index) {
-                        @if (formatDate(eventSession.startDate) === formatDate(day)) {
-                        <p class="event d-block p-1 pl-2 pr-2 mb-1 rounded text-truncate small" title="Event"
-                            (click)="goToEventDetail(eventSession.eventId)">{{ eventSession.event?.name }}</p>
+                @if (EventSessions != []) {
+                    @if (hasEventsForDay(EventSessions, day)) {
+                      @for (eventSession of EventSessions; track $index) {
+                        @if (this.formatDate(eventSession.startDate) === this.formatDate(day)) {
+                          <p class="event d-block p-1 pl-2 pr-2 mb-1 rounded text-truncate small" title="Event"
+                             (click)="goToEventDetail(eventSession.eventId, eventSession.event!)">
+                            {{ eventSession.event?.name }}
+                          </p>
                         }
-                        @if (formatDate(eventSession.startDate) !== formatDate(day)) {
+                      }
+                    } @else {
+                      <p class="d-sm-none">No events</p>
+                    }
+                  }
+                <!-- @if (EventSessions != []) {
+                    @for (eventSession of EventSessions; track $index) {
+                        @if (this.formatDate(eventSession.startDate) === this.formatDate(day)) {
+                        <p class="event d-block p-1 pl-2 pr-2 mb-1 rounded text-truncate small" title="Event"
+                            (click)="goToEventDetail(eventSession.eventId, eventSession.event!)">{{ eventSession.event?.name }}</p>
+                        }
+                        @if (this.formatDate(eventSession.startDate) !== this.formatDate(day)) {
                         <p class="d-sm-none">No events</p>
                         }
                     }
-                }
+                } -->
             </div>
             }
             <div class="ctn-arrows">
@@ -53,10 +57,10 @@
         }
         @if(userInput.length > 0){
         <div class="row border border-right-0 border-bottom-0">
-            @if(this.filteredEventSessions.length === 0){
+            @if(filteredEventSessions.length === 0){
                 <p>Nessuna Sessione Trovata</p>
             }
-            @if (this.filteredEventSessions.length > 0) {
+            @if (filteredEventSessions.length > 0) {
                 @for (day of foundedDays; track $index) {
                     <div [ngClass]="day < today ? 'day col-sm p-2 border border-left-0 border-top-0 text-truncate d-none d-sm-inline-block bg-light text-muted' : 
                                         'day col-sm p-2 border border-left-0 border-top-0 text-truncate'">
@@ -65,10 +69,10 @@
                         <small class="col d-sm-none text-muted"> {{ getDayOfWeekString(day) }} </small>
                         <span class="col-1"></span>
                     </h5>
-                    @for (eventSession of this.filteredEventSessions; track $index) {
-                        @if (formatDate(eventSession.startDate) === formatDate(day)) {
+                    @for (eventSession of filteredEventSessions; track $index) {
+                        @if (this.formatDate(eventSession.startDate) === this.formatDate(day)) {
                         <p class="event d-block p-1 pl-2 pr-2 mb-1 rounded text-truncate small" title="Event"
-                            (click)="goToEventDetail(eventSession.eventId)">{{ eventSession.event?.name }}</p>
+                        (click)="goToEventDetail(eventSession.eventId, eventSession.event!)">{{ eventSession.event?.name }}</p>
                     }
                     }
                     </div>
