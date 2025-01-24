@@ -5,10 +5,10 @@
 
   <div class="chat-container">
     <div class="chat-messages">
-      <div *ngFor="let msg of messages" class="message" [ngClass]="{'sent-message': msg.senderName === user?.email, 
+      <div *ngFor="let msg of this.ss.messageReceived$ | async" class="message" [ngClass]="{'sent-message': msg.senderName === user?.email, 
         'received-message': msg.senderName !== user?.email}">
         <strong>{{ user?.name }}</strong>
-        <p>{{ msg.body }}</p>
+        <p>{{ msg.messages }}</p>
         <div class="message-footer">
           <small>{{ msg.timeStamp| date:'HH:mm' }}</small>
           <span class="read-status" *ngIf="msg.id === user?.name">

@@ -19,10 +19,10 @@ export class SessionChatComponent implements OnInit {
   private hubConnection!: signalR.HubConnection;
   user: User | undefined;
   session: SessionService | undefined;
-  public message = '';
-  public messages: Message[] = [];
+  message = '';
 
-  constructor(private ss: SignalRService, private us: AuthService, session: SessionService) {
+
+  constructor(public ss: SignalRService, private us: AuthService, session: SessionService) {
     this.us.user.subscribe(user => {
       if (user) {
         this.user = user;
@@ -34,7 +34,6 @@ export class SessionChatComponent implements OnInit {
   ngOnInit(): void {
     // Avvia la connessione SignalR
     this.ss.startConnection();
-
     // Aggiungi un listener per i messaggi ricevuti
     this.ss['connection'].on('SendGroupMessage', (message: Message) => {
       console.log(`Ricevo:
@@ -42,7 +41,7 @@ export class SessionChatComponent implements OnInit {
           messaggio: ${message.body},
           tempo: ${message.timeStamp},
           id: ${message.id}`,);
-      this.messages.push(message);
+      this.ss.messageReceived$.next(this.ss.messageReceived$.value.concat(message));
     });
   }
   sendMessage(): void {
