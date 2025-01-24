@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import * as signalR from '@microsoft/signalr';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { SignalRService } from '../../services/signalr.service';
@@ -35,8 +34,9 @@ export class SessionChatComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
 
+  ngOnInit(): void {
+    // Avvia la connessione SignalR
     this.ss.startConnection();
 
     // Aggiungi un listener per i messaggi ricevuti

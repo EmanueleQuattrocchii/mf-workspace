@@ -6,9 +6,9 @@
   <div class="chat-container">
     <div class="chat-messages">
       <div *ngFor="let msg of messages" class="message"
-        [ngClass]="{'sent-message': msg.id === user?.name, 'received-message': msg.id !== user?.name}">
-        <strong>{{ msg.id }}</strong>
-        <p>{{ msg.sender }}</p>
+        [ngClass]="{'sent-message': msg === user?.name, 'received-message': msg !== user?.name}">
+        <strong>{{ msg }}</strong>
+        <p>{{ msg }}</p>
         <div class="message-footer">
           <small>{{ msg.timeStamp| date:'HH:mm' }}</small>
           <span class="read-status" *ngIf="msg.id === user?.name">
