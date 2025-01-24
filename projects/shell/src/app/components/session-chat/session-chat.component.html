@@ -5,10 +5,10 @@
 
   <div class="chat-container">
     <div class="chat-messages">
-      <div *ngFor="let msg of messages" class="message"
-        [ngClass]="{'sent-message': msg.sender === user?.name, 'received-message': msg.sender !== user?.name}">
-        <strong>{{ msg }}</strong>
-        <p>{{ msg }}</p>
+      <div *ngFor="let msg of messages" class="message" [ngClass]="{'sent-message': msg.senderName === user?.email, 
+        'received-message': msg.senderName !== user?.email}">
+        <strong>{{ user?.name }}</strong>
+        <p>{{ msg.body }}</p>
         <div class="message-footer">
           <small>{{ msg.timeStamp| date:'HH:mm' }}</small>
           <span class="read-status" *ngIf="msg.id === user?.name">
@@ -18,12 +18,12 @@
     </div>
 
     <div class="chat-input">
-  <div class="input-wrapper">
-    <input [(ngModel)]="message" placeholder="Enter your message..." (keydown.enter)="sendMessage()">
-    <div class="sent-icon" (click)="sendMessage()">
-      <i class="fa-solid fa-circle-arrow-up"></i>
+      <div class="input-wrapper">
+        <input [(ngModel)]="message" placeholder="Enter your message..." (keydown.enter)="sendMessage()">
+        <div class="sent-icon" (click)="sendMessage()">
+          <i class="fa-solid fa-circle-arrow-up"></i>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
   </div>
 </div>

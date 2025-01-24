@@ -1,10 +1,10 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 
 @Injectable({ providedIn: 'root' })
 
-export class SignalRService{
-   
+export class SignalRService {
+
     private connection: signalR.HubConnection;
     private hubUrl = 'https://localhost:7015/chatHub';
 
@@ -18,12 +18,15 @@ export class SignalRService{
 
         this.registerOnServerEvents();
     }
-    
+
 
     startConnection(): void {
         this.connection
             .start()
-            .then(() => console.log('SignalR connection started'))
+            .then(() => {
+                console.log('SignalR connection started')
+                this.joinGroup("8")
+            })
             .catch((err) => console.error('Error while starting connection: ', err));
     }
 
@@ -47,11 +50,12 @@ export class SignalRService{
 
     // Metodo per unirsi a un gruppo
     joinGroup(groupName: string): void {
-        this.connection
-            .invoke('JoinGroup', groupName).then(() => {
-                console.log('Joined group: ', groupName);
-            })
-            .catch((err) => console.error('Error joining group: ', err));
+        this.connection.invoke('JoinGroup', groupName)
+            .then(() => console.log(`Joined group: ${groupName}`))
+            .catch(err => console.error('Error joining group:', err));
+
+        // Ricezione dei messaggi del gruppo dopo essersi uniti
+
     }
 
     // Metodo per uscire da un gruppo
