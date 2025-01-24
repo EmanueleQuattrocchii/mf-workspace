@@ -40,7 +40,7 @@ export class SessionChatComponent implements OnInit {
     this.ss.startConnection();
 
     // Aggiungi un listener per i messaggi ricevuti
-    this.ss['hubConnection'].on('SendGroupMessage', (id: string, sender: string, body: string, timeStamp: Date) => {
+    this.ss['connection'].on('SendGroupMessage', (id: string, sender: string, body: string, timeStamp: Date) => {
       console.log("Ricevo: ", id, sender, body, timeStamp);
       this.messages.push({ id, sender, body, timeStamp });
     });
