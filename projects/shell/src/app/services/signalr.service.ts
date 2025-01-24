@@ -30,7 +30,7 @@ export class SignalRService implements OnInit {
     }
 
     sendMessage(sesssionId: string, message: string): void {
-        this.connection
+        this.hubConnection
             .invoke('SendGroupMessage', sesssionId, message)
             .catch((err) => console.error('Error while sending message: ', err));
     }
