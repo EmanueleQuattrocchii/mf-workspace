@@ -3,8 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
-import { SignalRService } from '../../services/signalr.service';
 import { SessionService } from '../../services/session.service';
+import { SignalRService } from '../../services/signalr.service';
 interface Message {
   id: string;
   sender: string;
@@ -40,7 +40,7 @@ export class SessionChatComponent implements OnInit {
     this.ss.startConnection();
 
     // Aggiungi un listener per i messaggi ricevuti
-    this.ss['connection'].on('SendGroupMessage', (id: string, sender: string, body: string, timeStamp: Date) => {
+    this.ss['hubConnection'].on('SendGroupMessage', (id: string, sender: string, body: string, timeStamp: Date) => {
       console.log("Ricevo: ", id, sender, body, timeStamp);
       this.messages.push({ id, sender, body, timeStamp });
     });
