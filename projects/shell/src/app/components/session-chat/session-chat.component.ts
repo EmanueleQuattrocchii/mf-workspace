@@ -5,12 +5,12 @@ import * as signalR from '@microsoft/signalr';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { SignalRService } from '../../services/signalr.service';
+import { SessionService } from '../../services/session.service';
 interface Message {
   id: string;
   sender: string;
-  text: string;
+  body: string;
   timeStamp: Date;
-  isRead: boolean;
 }
 @Component({
   selector: 'app-session-chat',
@@ -22,11 +22,12 @@ interface Message {
 export class SessionChatComponent implements OnInit {
 
   private hubConnection!: signalR.HubConnection;
-  user: User | undefined
+  user: User | undefined;
+  session: SessionService | undefined;
   public message = '';
   public messages: Message[] = [];
 
-  constructor(private ss: SignalRService, private us: AuthService) {
+  constructor(private ss: SignalRService, private us: AuthService, session: SessionService) {
     this.us.user.subscribe(user => {
       if (user) {
         this.user = user;
@@ -39,15 +40,15 @@ export class SessionChatComponent implements OnInit {
     this.ss.startConnection();
 
     // Aggiungi un listener per i messaggi ricevuti
-    this.ss['connection'].on('ReceiveMessage', (id: string, sender: string, text: string, timeStamp: Date, isRead: boolean) => {
-      console.log("Ricevo: ", id, sender, text, timeStamp, isRead);
-      this.messages.push({ id, sender, text, timeStamp, isRead });
+    this.ss['connection'].on('SendGroupMessage', (id: string, sender: string, body: string, timeStamp: Date) => {
+      console.log("Ricevo: ", id, sender, body, timeStamp);
+      this.messages.push({ id, sender, body, timeStamp });
     });
   }
   sendMessage(): void {
     if (this.message.trim()) {
       console.log('Mando: ', this.message);
-      this.ss.sendMessage(this.user!.name, this.message);
+      this.ss.sendMessage("8", this.message);
       this.message = '';
     }
   }

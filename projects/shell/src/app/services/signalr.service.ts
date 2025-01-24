@@ -29,9 +29,9 @@ export class SignalRService implements OnInit {
             .catch((err) => console.error('Error while starting connection: ', err));
     }
 
-    sendMessage(user: string, message: string): void {
+    sendMessage(sesssionId: string, message: string): void {
         this.connection
-            .invoke('SendMessage', user, message)
+            .invoke('SendGroupMessage', sesssionId, message)
             .catch((err) => console.error('Error while sending message: ', err));
     }
 

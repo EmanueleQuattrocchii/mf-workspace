@@ -12,8 +12,6 @@
         <div class="message-footer">
           <small>{{ msg.timeStamp| date:'HH:mm' }}</small>
           <span class="read-status" *ngIf="msg.id === user?.name">
-            <i class="checkmark" *ngIf="msg.isRead">✓✓</i>
-            <i class="checkmark" *ngIf="!msg.isRead">✓</i>
           </span>
         </div>
       </div>
