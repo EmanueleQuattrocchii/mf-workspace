@@ -6,7 +6,7 @@
   <div class="chat-container">
     <div class="chat-messages">
       <div *ngFor="let msg of messages" class="message"
-        [ngClass]="{'sent-message': msg === user?.name, 'received-message': msg !== user?.name}">
+        [ngClass]="{'sent-message': msg.sender === user?.name, 'received-message': msg.sender !== user?.name}">
         <strong>{{ msg }}</strong>
         <p>{{ msg }}</p>
         <div class="message-footer">
