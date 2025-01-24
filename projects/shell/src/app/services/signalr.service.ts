@@ -4,47 +4,61 @@ import * as signalR from '@microsoft/signalr';
 @Injectable({ providedIn: 'root' })
 
 export class SignalRService implements OnInit {
-    
-    private connection: signalR.HubConnection;
     private hubUrl = 'https://localhost:7015/chatHub';
 
-    constructor() {
-        this.connection = new signalR.HubConnectionBuilder()
-            .withUrl(this.hubUrl, {
-                accessTokenFactory: () => localStorage.getItem('token') ?? ''
-            })
-            .withAutomaticReconnect()
-            .build();
+    private hubConnection!: signalR.HubConnection;
 
-        this.registerOnServerEvents();
-    }
+    constructor() { }
     ngOnInit(): void {
         throw new Error('Method not implemented.');
     }
 
+    // Metodo per avviare la connessione
     startConnection(): void {
-        this.connection
+        this.hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl(this.hubUrl) //dobbiamo vedere che fare su azure
+            .withAutomaticReconnect()
+            .build();
+
+        this.hubConnection
             .start()
-            .then(() => console.log('SignalR connection started'))
-            .catch((err) => console.error('Error while starting connection: ', err));
+            .then(() => {
+                console.log('Connection started')
+                this.joinGroup('8');
+            })
+            .catch((err) => console.error('Error starting connection: ', err));
     }
 
-    sendMessage(user: string, message: string): void {
-        this.connection
-            .invoke('SendMessage', user, message)
-            .catch((err) => console.error('Error while sending message: ', err));
+    // Metodo per inviare un messaggio a un gruppo
+    sendGroupMessage(groupName: string, message: string): void {
+        this.hubConnection
+            .invoke('SendGroupMessage', groupName, message)
+            .catch((err) => console.error('Error sending message: ', err));
     }
 
-    sendNotification(userId: string, message: string): void {
-        this.connection
-            .invoke('SendNotificationAsync', userId, message)
-            .catch((err) => console.error('Error while sending notification: ', err));
-    }
-
-    private registerOnServerEvents(): void {
-        this.connection.on('ReceiveMessage', (user: string, message: string) => {
-            console.log(`Message received from ${user}: ${message}`);
+    // Metodo per ricevere i messaggi
+    onReceiveMessage(callback: (message: string) => void): void {
+        this.hubConnection.on('SendGroupMessage', (message: string) => {
+            callback(message);
         });
+    }
+
+    // Metodo per unirsi a un gruppo
+    joinGroup(groupName: string): void {
+        this.hubConnection
+            .invoke('JoinGroup', groupName).then(() => {
+                console.log('Joined group: ', groupName);
+            })
+            .catch((err) => console.error('Error joining group: ', err));
+    }
+
+    // Metodo per uscire da un gruppo
+    leaveGroup(groupName: string): void {
+        this.hubConnection
+            .invoke('LeaveGroup', groupName).then(() => {
+                console.log('LeaveGroup: ', groupName);
+            })
+            .catch((err) => console.error('Error leaving group: ', err));
     }
 
 }

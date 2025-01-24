@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import * as signalR from '@microsoft/signalr';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { SignalRService } from '../../services/signalr.service';
@@ -10,7 +9,6 @@ interface Message {
   sender: string;
   text: string;
   timeStamp: Date;
-  isRead: boolean;
 }
 @Component({
   selector: 'app-session-chat',
@@ -21,10 +19,11 @@ interface Message {
 })
 export class SessionChatComponent implements OnInit {
 
-  private hubConnection!: signalR.HubConnection;
   user: User | undefined
-  public message = '';
-  public messages: Message[] = [];
+  groupName = '8';
+  message = '';
+  messages: string[] = [];
+
 
   constructor(private ss: SignalRService, private us: AuthService) {
     this.us.user.subscribe(user => {
@@ -34,23 +33,28 @@ export class SessionChatComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void {
 
+  ngOnInit(): void {
+    // Avvia la connessione SignalR
     this.ss.startConnection();
 
-    // Aggiungi un listener per i messaggi ricevuti
-    this.ss['connection'].on('ReceiveMessage', (id: string, sender: string, text: string, timeStamp: Date, isRead: boolean) => {
-      console.log("Ricevo: ", id, sender, text, timeStamp, isRead);
-      this.messages.push({ id, sender, text, timeStamp, isRead });
+    // Ricevi i messaggi dal server
+    this.ss.onReceiveMessage((message: string) => {
+      this.messages.push(message);
     });
   }
-  sendMessage(): void {
-    if (this.message.trim()) {
-      console.log('Mando: ', this.message);
-      this.ss.sendMessage(this.user!.name, this.message);
-      this.message = '';
-    }
+
+  joinGroup(): void {
+    this.ss.joinGroup(this.groupName);
   }
 
+  leaveGroup(): void {
+    this.ss.leaveGroup(this.groupName);
+  }
+
+  sendMessage(): void {
+    this.ss.sendGroupMessage(this.groupName, this.message);
+    this.message = ''; // Resetta il campo messaggio
+  }
 
 }
