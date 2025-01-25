@@ -16,11 +16,9 @@ import { SignalRService } from '../../services/signalr.service';
 })
 export class SessionChatComponent implements OnInit {
 
-  private hubConnection!: signalR.HubConnection;
   user: User | undefined;
   session: SessionService | undefined;
   message = '';
-
 
   constructor(public ss: SignalRService, private us: AuthService, session: SessionService) {
     this.us.user.subscribe(user => {
@@ -32,23 +30,16 @@ export class SessionChatComponent implements OnInit {
 
 
   ngOnInit(): void {
-    // Avvia la connessione SignalR
-    this.ss.startConnection();
-    // Aggiungi un listener per i messaggi ricevuti
-    this.ss['connection'].on('SendGroupMessage', (message: Message) => {
-      console.log(`Ricevo:
-          nome: ${message.senderName},
-          messaggio: ${message.body},
-          tempo: ${message.timeStamp},
-          id: ${message.id}`,);
-      this.ss.messageReceived$.next(this.ss.messageReceived$.value.concat(message));
+    this.ss.startConnection("27");
+    this.ss.onReceiveMessage((message: Message) => {
+      this.ss.completeChat$.value.messages.push(message);
     });
   }
   sendMessage(): void {
     if (this.message.trim()) {
-      console.log('Mando: ', this.message);
-      this.ss.sendMessage("8", this.message);
+      this.ss.sendGroupMessage("27", this.message);
     }
+    this.message = '';
   }
 
 
