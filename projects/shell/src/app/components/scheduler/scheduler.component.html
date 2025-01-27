@@ -8,10 +8,13 @@
             </div>
         </div>
     </div>
+    <div class="header">
+        <h4 class="display-4 mb-4 text-center">Calendar</h4>
+        <div class="btn-create" (click)="openCreateEvent()" *ngIf="this.as.isAdmin">
+            Create Event
+        </div>
+    </div>
     <div class="container-fluid">
-        <header>
-            <h4 class="display-4 mb-4 text-center">Calendar</h4>
-        </header>
         @if(userInput.length === 0){
         <div class="row border border-right-0 border-bottom-0">
             @for (day of days; track $index) {

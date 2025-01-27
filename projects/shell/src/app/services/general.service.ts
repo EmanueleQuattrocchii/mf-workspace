@@ -9,19 +9,21 @@ export class GeneralService {
 
   eventDetail: EventModel | undefined;
 
-  isSessionModal : boolean = false;
+  isSessionModal: boolean = false;
 
-  isConfirmModal : boolean = false; 
-  isLoading: boolean = false;
-  isQueueModal: boolean = false;
   isSignModal: boolean = false;
 
   eventRoute: string = '';
 
-  isDeleteUserModal: boolean = false;
-  isCreateUserModal : boolean = false;
+  isConfirmModal: boolean = false;
+  isLoading: boolean = false;
+  isQueueModal: boolean = false;
 
   isOverlayOn$ = new BehaviorSubject<boolean>(false);
+
+  isDeleteUserModal: boolean = false;
+  isCreateUserModal: boolean = false;
+
   isLoadingScreen$ = new BehaviorSubject<boolean>(false);
 
   isInputFixed$ = new BehaviorSubject<boolean>(false);
@@ -32,23 +34,23 @@ export class GeneralService {
   errorMessage: string = 'Server Error, Please Try Again';
   defErrMessage: string = 'Server Error, Please Try Again';
 
-  setError(){
-    if(this.serverConfirm=true){
-      this.serverConfirm=false;
+  setError() {
+    if (this.serverConfirm = true) {
+      this.serverConfirm = false;
     }
-    this.serverError=true;
+    this.serverError = true;
     setTimeout(() => {
-      this.serverError=false;
+      this.serverError = false;
     }, 4000);
   }
 
-  setConfirm(){
-    if(this.serverError=true){
-      this.serverError=false;
+  setConfirm() {
+    if (this.serverError = true) {
+      this.serverError = false;
     }
-    this.serverConfirm=true;
+    this.serverConfirm = true;
     setTimeout(() => {
-      this.serverConfirm=false;
+      this.serverConfirm = false;
     }, 4000);
   }
 }

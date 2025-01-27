@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { DurationPipe } from '../../pipes/duration.pipe';
 import { EventService } from '../../services/event.service';
 import { EventModel } from '../../models/event.model';
@@ -10,7 +10,7 @@ import { GeneralService } from '../../services/general.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, DurationPipe, RouterLink],
+  imports: [CommonModule, FormsModule, DurationPipe],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

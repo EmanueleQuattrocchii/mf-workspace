@@ -8,6 +8,7 @@ import { AuthService } from '../../../services/auth.service';
 import { GeneralService } from '../../../services/general.service';
 import { User } from '../../../models/user.model';
 
+
 @Component({
   selector: 'app-dashboard-admin',
   standalone: true,
@@ -20,7 +21,7 @@ export class DashboardAdminComponent implements OnInit {
   user: User | undefined;
   isSidebarOpen: boolean = false;
 
-  constructor(public ds: DashboardService, public router: Router, private as: AdminService, private auth: AuthService, private gn: GeneralService) { }
+  constructor( public ds: DashboardService, public router: Router, private as: AdminService, private auth: AuthService, private gn: GeneralService) { }
 
   ngOnInit() {
 

@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { AdminService } from '../../../services/admin.service';
 import { GeneralService } from '../../../services/general.service';
 
+
 @Component({
   selector: 'app-auth-layout',
   standalone: true,
@@ -15,7 +16,7 @@ import { GeneralService } from '../../../services/general.service';
 })
 export class AuthLayoutComponent implements OnInit,OnDestroy,AfterContentChecked{
 
-  constructor(public gn: GeneralService,public as: AdminService, private router: Router,private changeDetector: ChangeDetectorRef) {}
+  constructor( public gn: GeneralService,public as: AdminService, private router: Router,private changeDetector: ChangeDetectorRef) {}
 
   death$ = new Subject<void>();
 

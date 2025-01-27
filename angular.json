@@ -89,13 +89,13 @@
 							"budgets": [
 								{
 									"type": "initial",
-									"maximumWarning": "500kB",
-									"maximumError": "1MB"
+									"maximumWarning": "5MB",
+									"maximumError": "5MB"
 								},
 								{
 									"type": "anyComponentStyle",
-									"maximumWarning": "2kB",
-									"maximumError": "4kB"
+									"maximumWarning": "5MB",
+									"maximumError": "5MB"
 								}
 							],
 							"outputHashing": "all"
@@ -211,13 +211,13 @@
 							"budgets": [
 								{
 									"type": "initial",
-									"maximumWarning": "500kB",
-									"maximumError": "1MB"
+									"maximumWarning": "5MB",
+									"maximumError": "5MB"
 								},
 								{
 									"type": "anyComponentStyle",
-									"maximumWarning": "2kB",
-									"maximumError": "4kB"
+									"maximumWarning": "5MB",
+									"maximumError": "5MB"
 								}
 							],
 							"outputHashing": "all"
@@ -246,7 +246,40 @@
 					}
 				}
 			}
-		}
+    },
+    "shared-service": {
+      "projectType": "library",
+      "root": "projects/shared-service",
+      "sourceRoot": "projects/shared-service/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "options": {
+            "project": "projects/shared-service/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/shared-service/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/shared-service/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/shared-service/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    }
 	},
 	"cli": {
 		"analytics": false

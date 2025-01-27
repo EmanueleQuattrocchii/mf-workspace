@@ -6,6 +6,7 @@ import { AdminService } from '../../../../services/admin.service';
 import { GeneralService } from '../../../../services/general.service';
 import { UserAdminService } from '../../../../services/user-admin.service';
 
+
 @Component({
   selector: 'app-modal-create-user',
   standalone: true,
@@ -18,7 +19,7 @@ export class ModalCreateUserComponent {
   hidePassword: boolean = true;
   userForm: FormGroup;
   isCreating: boolean = false;
-  constructor(public as: AdminService, private formBuilder: FormBuilder, private router: Router, private gn: GeneralService,
+  constructor( public as: AdminService, private formBuilder: FormBuilder, private router: Router, private gn: GeneralService,
     private uas: UserAdminService) {
     this.userForm = this.formBuilder.group({
 

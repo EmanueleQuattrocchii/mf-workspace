@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { gameSessionModel } from '../../models/gameSession.model';
 import { SessionService } from '../../services/session.service';
 import { AuthService } from '../../services/auth.service';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
 import { EventModel } from '../../models/event.model';
 import { GeneralService } from '../../services/general.service';
 
@@ -18,8 +18,8 @@ import { GeneralService } from '../../services/general.service';
 })
 export class SchedulerComponent implements OnInit {
 
-  constructor(private router: Router, public sessionService: SessionService, private gn: GeneralService, public as: AuthService) { }
-
+  constructor(private router: Router, public sessionService: SessionService, private gn: GeneralService, public as: AuthService) {}
+   
   @Input() isScrolled = false;
 
   days: Array<Date> = [];
@@ -173,6 +173,10 @@ export class SchedulerComponent implements OnInit {
     return EventSessions.some(eventSession => 
       this.formatDate(eventSession.startDate) === this.formatDate(day)
     );
+  }
+  
+  openCreateEvent() {
+    this.router.navigate(['dashboard-admin/events/create']);
   }
   
 }

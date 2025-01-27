@@ -1,4 +1,5 @@
-<div class="container" *ngIf="this.event" > <!--[ngStyle]="{'background': 'url(' + this.event.imgUrl + ') no-repeat center center'}"-->
+<div class="container" *ngIf="this.event">
+    <!--[ngStyle]="{'background': 'url(' + this.event.imgUrl + ') no-repeat center center'}"-->
     <div class="main-event" *ngIf="this.event">
         <div class="event-image">
             <img [src]="this.event!.imgUrl" alt="event image">
@@ -23,7 +24,7 @@
                 <span>Yassine</span>
             </div> -->
 
-           
+
         </div>
     </div>
 
@@ -31,25 +32,39 @@
         <div class="event-details" *ngIf="this.event && this.event.sessions!.length > 0">
             <div class="event-display">
                 <div class="initial">Next Session</div>
-                <div class="detail-info"*ngIf="this.event.sessions">
-                    <div class="detail master" *ngIf="this.event.sessions[0].master" >
+                <div class="detail-info" *ngIf="this.event.sessions">
+                    <div class="detail master" *ngIf="this.event.sessions[0].master">
                         <div class="master-img"><img src="assets/images/pfp.jpg"></div>
-                        <div class="master-info"><span class="master-name">{{this.event.sessions[0].master!.name}}</span><span class="gamemaster">Game Master</span></div>
+                        <div class="master-info"><span
+                                class="master-name">{{this.event.sessions[0].master!.name}}</span><span
+                                class="gamemaster">Game Master</span></div>
                     </div>
-                    <div class="detail" *ngIf="this.event.sessions[0].game"><i class="fa-solid fa-gamepad"></i> {{this.event.sessions[0].game!.name}}</div>
-                    <div class="detail" *ngIf="this.event.sessions.length > 0 && this.event.sessions[0].reservations"><i class="fa-solid fa-users"></i>  {{getSeatsLeft(this.event.sessions[0]!)}} / {{this.event.sessions[0].seats}} </div>
-                    <div class="detail" *ngIf="this.event.sessions.length > 0"><i class="fa-regular fa-clock"></i> {{this.event.sessions[0].startDate| date:'EEE, MMM d - HH:mm'}}</div>
+                    <div class="detail" *ngIf="this.event.sessions[0].game"><i class="fa-solid fa-gamepad"></i>
+                        {{this.event.sessions[0].game!.name}}</div>
+                    <div class="detail" *ngIf="this.event.sessions.length > 0 && this.event.sessions[0].reservations"><i
+                            class="fa-solid fa-users"></i> {{getSeatsLeft(this.event.sessions[0]!)}} /
+                        {{this.event.sessions[0].seats}} </div>
+                    <div class="detail" *ngIf="this.event.sessions.length > 0"><i class="fa-regular fa-clock"></i>
+                        {{this.event.sessions[0].startDate| date:'EEE, MMM d - HH:mm'}}</div>
                 </div>
-                <div class="buttons"*ngIf="this.event.sessions">
-                    <div class="btn-register" (click)="register(this.event.sessions[0])" *ngIf="this.event.sessions[0].reservations.length < this.event.sessions[0].seats && !checkSessionReservation(this.event.sessions[0])">Register for this Session</div>
-                    <div class="btn-queue join" (click)="joinQueue(this.event.sessions[0])" *ngIf="this.event.sessions[0].reservations.length >= this.event.sessions[0].seats && !checkSessionReservation(this.event.sessions[0])">Join Queue</div>
-                    <div class="btn-arleady" *ngIf="checkSessionReservation(this.event.sessions[0]) && checkConfirmedReservation(this.event.sessions[0])">Already Registered</div>
-                    <div class="btn-queue" *ngIf="checkSessionReservation(this.event.sessions[0]) && checkQueueReservation(this.event.sessions[0])">Queued</div>
+                <div class="buttons" *ngIf="this.event.sessions">
+                    <div class="btn-register" (click)="register(this.event.sessions[0])"
+                        *ngIf="this.event.sessions[0].reservations.length < this.event.sessions[0].seats && !checkSessionReservation(this.event.sessions[0])">
+                        Register for this Session</div>
+                    <div class="btn-queue join" (click)="joinQueue(this.event.sessions[0])"
+                        *ngIf="this.event.sessions[0].reservations.length >= this.event.sessions[0].seats && !checkSessionReservation(this.event.sessions[0])">
+                        Join Queue</div>
+                    <div class="btn-arleady"
+                        *ngIf="checkSessionReservation(this.event.sessions[0]) && checkConfirmedReservation(this.event.sessions[0])">
+                        Already Registered</div>
+                    <div class="btn-queue"
+                        *ngIf="checkSessionReservation(this.event.sessions[0]) && checkQueueReservation(this.event.sessions[0])">
+                        Queued</div>
                 </div>
             </div>
         </div>
-    
-        <div class="event-details" *ngIf="this.event && this.event.sessions!.length > 0"> 
+
+        <div class="event-details" *ngIf="this.event && this.event.sessions!.length > 0">
             <div class="event-display">
                 <div class="initial lowbottom">All sessions</div>
                 <div class="session" *ngFor="let session of event.sessions | slice:0:3">
@@ -67,7 +82,7 @@
                     <div class="btn-register" (click)="sessionModal(true)">View all Sessions</div>
                 </div>
             </div>
-            </div>
+        </div>
     </div>
 
     <div class="modal-sessions" *ngIf="this.gn.isSessionModal ">
@@ -84,13 +99,117 @@
                         </div>
                     </div>
 
-                    <div class="session-seats light-font"><i class="fa-solid fa-users"></i> {{session.reservations.length}} / {{session.seats}} 
+                    <div class="session-seats light-font"><i class="fa-solid fa-users"></i>
+                        {{session.reservations.length}} / {{session.seats}}
                     </div>
                     <div class="btn-view" (click)="openSessionDetail(session)">Details</div>
 
                 </div>
             </div>
         </div>
+    </div>
+    <div #subModal></div>
+    <div class="modal-sign" *ngIf="this.gn.isSignModal">
+        <div class="modal-content">
+            <form [formGroup]="registerForm">
+                <div class="input-group double">
+                    <input type="text" formControlName="name" placeholder="Name" required
+                        [class.input-error]="registerForm.get('name')?.invalid && (registerForm.get('name')?.touched || registerForm.get('name')?.dirty)">
+                    <input type="text" formControlName="surname" placeholder="Surname" required
+                        [class.input-error]="registerForm.get('surname')?.invalid && (registerForm.get('surname')?.touched || registerForm.get('surname')?.dirty)">
+                </div>
+                <div class="input-group">
+                    <input type="email" formControlName="email" placeholder="Email" required
+                        [class.input-error]="registerForm.get('email')?.invalid && (registerForm.get('email')?.touched || registerForm.get('email')?.dirty)">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+                <div *ngIf="registerForm.get('email')?.invalid && (registerForm.get('email')?.touched || registerForm.get('email')?.dirty)"
+                    class="display-errors">
+                    <small class="error" *ngIf="registerForm.get('email')?.errors?.['required']">Email is
+                        required</small>
+                    <small class="error" *ngIf="registerForm.get('email')?.errors?.['email']">Invalid email
+                        format</small>
+                </div>
+
+                <div class="input-group">
+                    <input type="tel" formControlName="phone" placeholder="Phone" required
+                        [class.input-error]="registerForm.get('phone')?.invalid && (registerForm.get('phone')?.touched || registerForm.get('phone')?.dirty)">
+                    <i class="fa-solid fa-phone"></i>
+                </div>
+                <div *ngIf="registerForm.get('phone')?.invalid && (registerForm.get('phone')?.touched || registerForm.get('phone')?.dirty)"
+                    class="display-errors">
+                    <small class="error" *ngIf="registerForm.get('phone')?.errors?.['required']">Phone is
+                        required</small>
+                    <small class="error" *ngIf="registerForm.get('phone')?.errors?.['pattern']">Phone must be 10
+                        digits</small>
+                </div>
+
+                <div class="input-group">
+                    <input type="date" formControlName="birthDate" placeholder="Birth Date" required
+                        [class.input-error]="registerForm.get('birthDate')?.invalid && (registerForm.get('birthDate')?.touched || registerForm.get('birthDate')?.dirty)">
+                </div>
+                <div *ngIf="registerForm.get('birthDate')?.invalid && (registerForm.get('birthDate')?.touched || registerForm.get('birthDate')?.dirty)"
+                    class="display-errors">
+                    <small class="error" *ngIf="registerForm.get('birthDate')?.errors?.['required']">Birth date is
+                        required</small>
+                </div>
+                <button type="submit" class="login-button" (click)="onSubmit()"
+                    *ngIf="sessionDetail!.reservations.length < sessionDetail!.seats && !checkSessionReservation(sessionDetail!)">
+                    Subscribe</button>
+                <button type="submit" class="login-button" (click)="onSubmit()"
+                    *ngIf="sessionDetail!.reservations.length >= sessionDetail!.seats && !checkSessionReservation(sessionDetail!)">
+                    Subscribe</button>
+            </form>
+            <!-- <div class="modal-sign-title">Sign in to register</div>
+            <div class="modal-subtitle">You need to be signed in to register for this event</div>
+            <span class="close" (click)="closeSignModal()"> <i class="fa-solid fa-x"></i></span>
+            <div class="buttons sign">
+                <div class="btn-log" (click)="redirect(true)">Log In</div>
+                <div class="btn-sign" (click)="redirect(false)">Sign Up</div>
+            </div> -->
+        </div>
+    </div>
+
+    <div class="session-details" *ngIf="isSessionDetail || sessionDetail">
+        <div class="session-detail-content">
+            <span class="close" (click)="closeSessionDetail()"> <i class="fa-solid fa-x"></i></span>
+            <div class="session-detail-title">Session Details</div>
+            <div class="session-detail-info">
+                <div class="session-detail date">
+                    <i class="fa-solid fa-calendar"></i>
+                    <div class="session-date">
+                        <div class="date">{{ sessionDetail!.startDate | date:'EEE, MMM d' }}</div>
+                        <div class="time">{{ sessionDetail!.startDate | date:'HH:mm':'UTC+1' }} - {{
+                            sessionDetail!.endDate | date:'HH:mm' }}</div>
+                    </div>
+                </div>
+                <div class="session-detail seats"><i class="fa-solid fa-users"></i> {{getSeatsLeft(sessionDetail!)}} /
+                    {{sessionDetail!.seats}} <span class="light">players</span>
+                </div>
+                <div class="session-detail game" *ngIf="sessionDetail?.game?.name"><i class="fa-solid fa-gamepad"></i>
+                    {{sessionDetail!.game?.name}}</div>
+                <div class="detail master-session" *ngIf="sessionDetail?.master">
+                    <div class="master-img"><img src="assets/images/pfp.jpg"></div>
+                    <div class="master-info"><span class="master-name">{{sessionDetail!.master?.name}}</span><span
+                            class="gamemaster">Game Master</span></div>
+                </div>
+                <div class="buttons lowtop" *ngIf="sessionDetail">
+                    <div class="btn-register" (click)="register(sessionDetail)"
+                        *ngIf="sessionDetail.reservations.length < sessionDetail.seats && !checkSessionReservation(sessionDetail)">
+                        Register for this Session</div>
+                    <div class="btn-queue join" (click)="joinQueue(sessionDetail)"
+                        *ngIf="sessionDetail.reservations.length >= sessionDetail.seats && !checkSessionReservation(sessionDetail)">
+                        Join Queue</div>
+                    <div class="btn-arleady"
+                        *ngIf="checkSessionReservation(sessionDetail) && checkConfirmedReservation(sessionDetail)">
+                        Already Registered</div>
+                    <div class="btn-queue"
+                        *ngIf="checkSessionReservation(sessionDetail) && checkQueueReservation(sessionDetail)">Queued
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <div class="modal-loading" *ngIf="this.gn.isLoading">
@@ -120,52 +239,10 @@
             <div class="btn-email" (click)="closeConfirmModal()">Close</div>
         </div>
     </div>
-
+    
     <div class="modal-confirm" *ngIf="this.gn.isQueueModal">
         <div class="circle">
             <div class="checkmark"></div>
         </div>
         <div class="message">You have been added to the queue!</div>
     </div>
-
-    <div class="modal-sign" *ngIf="this.gn.isSignModal">
-        <div class="modal-content">
-            <div class="modal-sign-title">Sign in to register</div>
-            <div class="modal-subtitle">You need to be signed in to register for this event</div>
-            <span class="close" (click)="closeSignModal()"> <i class="fa-solid fa-x"></i></span>
-            <div class="buttons sign">
-                <div class="btn-log" (click)="redirect(true)">Log In</div>
-                <div class="btn-sign" (click)="redirect(false)">Sign Up</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="session-details" *ngIf="isSessionDetail || sessionDetail">
-        <div class="session-detail-content">
-            <span class="close" (click)="closeSessionDetail()"> <i class="fa-solid fa-x"></i></span>
-            <div class="session-detail-title">Session Details</div>
-            <div class="session-detail-info">
-                <div class="session-detail date">
-                    <i class="fa-solid fa-calendar"></i>
-                    <div class="session-date">
-                        <div class="date">{{ sessionDetail!.startDate | date:'EEE, MMM d'  }}</div>
-                        <div class="time">{{ sessionDetail!.startDate | date:'HH:mm':'UTC+1' }} - {{ sessionDetail!.endDate | date:'HH:mm' }}</div>
-                    </div>
-                </div>
-                <div class="session-detail seats"><i class="fa-solid fa-users"></i> {{getSeatsLeft(sessionDetail!)}} / {{sessionDetail!.seats}} <span class="light">players</span>
-                </div>
-                <div class="session-detail game" *ngIf="sessionDetail?.game?.name"><i class="fa-solid fa-gamepad"></i> {{sessionDetail!.game?.name}}</div>
-                <div class="detail master-session" *ngIf="sessionDetail?.master">
-                    <div class="master-img"><img src="assets/images/pfp.jpg"></div>
-                    <div class="master-info"><span class="master-name">{{sessionDetail!.master?.name}}</span><span class="gamemaster">Game Master</span></div>
-                </div>
-            <div class="buttons lowtop" *ngIf="sessionDetail">
-                <div class="btn-register" (click)="register(sessionDetail)" *ngIf="sessionDetail.reservations.length < sessionDetail.seats && !checkSessionReservation(sessionDetail)">Register for this Session</div>
-                <div class="btn-queue join" (click)="joinQueue(sessionDetail)" *ngIf="sessionDetail.reservations.length >= sessionDetail.seats && !checkSessionReservation(sessionDetail)">Join Queue</div>
-                <div class="btn-arleady" *ngIf="checkSessionReservation(sessionDetail) && checkConfirmedReservation(sessionDetail)">Already Registered</div>
-                <div class="btn-queue" *ngIf="checkSessionReservation(sessionDetail) && checkQueueReservation(sessionDetail)">Queued</div>
-            </div>
-        </div>
-    </div>
-
-</div>

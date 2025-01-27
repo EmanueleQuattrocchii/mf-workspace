@@ -16,6 +16,7 @@ import { GeneralService } from '../../../../services/general.service';
 import { ReservationService } from '../../../../services/reservation.service';
 import { SessionService } from '../../../../services/session.service';
 
+
 @Component({
   selector: 'app-create-event',
   standalone: true,
@@ -25,7 +26,7 @@ import { SessionService } from '../../../../services/session.service';
 })
 export class CreateEventComponent implements OnInit {
 
-  constructor(private eventService: EventService, public ds: DashboardService, public gn: GeneralService, private router: Router, private sessionService: SessionService, private resService: ReservationService, private auth: AuthService) { }
+  constructor( private eventService: EventService, public ds: DashboardService, public gn: GeneralService, private router: Router, private sessionService: SessionService, private resService: ReservationService, private auth: AuthService) { }
 
   event: EventModel = {
     eventId: 0,

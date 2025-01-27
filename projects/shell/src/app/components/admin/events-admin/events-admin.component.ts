@@ -14,6 +14,7 @@ import { DashboardService } from '../../../services/dashboard.service';
 import { EventService } from '../../../services/event.service';
 import { GeneralService } from '../../../services/general.service';
 
+
 @Component({
   selector: 'app-events-admin',
   standalone: true,
@@ -31,7 +32,7 @@ export class EventsAdminComponent implements OnInit, AfterViewInit {
 
   dataSource = new MatTableDataSource<EventModel>();
   
-  constructor(public ds: DashboardService,public eventService: EventService,private router: Router,private gn: GeneralService){}
+  constructor( public ds: DashboardService,public eventService: EventService,private router: Router,private gn: GeneralService){}
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 

@@ -18,6 +18,7 @@ import { UserAdminService } from '../../../services/user-admin.service';
 import { Subject, takeUntil } from 'rxjs';
 import { createPatch } from 'rfc6902';
 
+
 @Component({
   selector: 'app-users-admin',
   standalone: true,
@@ -39,7 +40,7 @@ export class UsersAdminComponent implements OnInit, AfterViewInit, OnDestroy {
   death$ = new Subject<void>();
 
 
-  constructor(public ds: DashboardService, public headerService: HeaderService, public as: AdminService, private router: Router, private gn: GeneralService, public uas: UserAdminService) { }
+  constructor( public ds: DashboardService, public headerService: HeaderService, public as: AdminService, private router: Router, private gn: GeneralService, public uas: UserAdminService) { }
 
 
   displayedColumns: string[] = ['user', 'email','phoneNumber',  'role']; 

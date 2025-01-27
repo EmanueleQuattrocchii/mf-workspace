@@ -6,6 +6,7 @@ import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../environments/environment';
 import { User } from '../models/user.model';
 import { GeneralService } from './general.service';
+import { Guest } from '../models/guest.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,31 @@ export class AuthService {
           resolve(res);
           this.gn.confirmMessage = 'User registered successfully, please login';
           this.gn.setConfirm();
+        },
+        error: (error) => {
+          // if (error.status === 400) {
+          //   this.gn.errorMessage = 'User with this email already exists';
+          //   this.gn.setError();
+          // } else {
+          //   console.error(error);
+          //   this.gn.errorMessage = 'Server Error, please try again later';
+          //   this.gn.setError();
+          // }
+          this.gn.errorMessage=error.error.message;
+          this.gn.setError();
+          reject(error);
+        }
+      });
+    });
+  }
+
+  registerGuest(user: Guest): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}api/register-guest`, user).subscribe({
+        next: (res) => {
+          resolve(res);
+          // this.gn.confirmMessage = 'User registered successfully, please login';
+          // this.gn.setConfirm();
         },
         error: (error) => {
           // if (error.status === 400) {

@@ -14,6 +14,7 @@ import { GeneralService } from '../../../../services/general.service';
 import { ReservationService } from '../../../../services/reservation.service';
 import { SessionService } from '../../../../services/session.service';
 
+
 @Component({
   selector: 'app-eventdetail-admin',
   standalone: true,
@@ -23,7 +24,7 @@ import { SessionService } from '../../../../services/session.service';
 })
 export class EventDetailAdminComponent implements OnInit {
 
-  constructor(private eventService: EventService, public ds: DashboardService, public gn: GeneralService, private router: Router, private sessionService: SessionService, private resService: ReservationService) { }
+  constructor( private eventService: EventService, public ds: DashboardService, public gn: GeneralService, private router: Router, private sessionService: SessionService, private resService: ReservationService) { }
 
   event: EventModel | undefined;
   @ViewChild('dropdownElementMaster') dropdownElementMaster: ElementRef | undefined;

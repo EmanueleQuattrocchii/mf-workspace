@@ -17,7 +17,6 @@ import { DashboardService } from '../../../services/dashboard.service';
 import { GameService } from '../../../services/game.service';
 import { GeneralService } from '../../../services/general.service';
 import { HeaderService } from '../../../services/header.service';
-import { ModalCreateUserComponent } from '../users-admin/modal-create-user/modal-create-user.component';
 import { ModalCreateGameComponent } from "./modal-create-game/modal-create-game.component";
 
 
@@ -37,7 +36,6 @@ interface EditState {
     MatChipsModule,
     MatIconModule,
     MatPaginator,
-    ModalCreateUserComponent,
     ReactiveFormsModule,
     FormsModule, ModalCreateGameComponent],
   templateUrl: './games-admin.component.html',
@@ -72,7 +70,7 @@ export class GamesAdminComponent implements OnInit, OnDestroy {
   selectedImageFile: File | null = null;
 
 
-  constructor(public ds: DashboardService, public headerService: HeaderService, public as: AdminService, private router: Router, private fb: FormBuilder, public gs: GameService, private gn: GeneralService) {
+  constructor( public ds: DashboardService, public headerService: HeaderService, public as: AdminService, private router: Router, private fb: FormBuilder, public gs: GameService, private gn: GeneralService) {
     this.form = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],

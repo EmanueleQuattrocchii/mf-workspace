@@ -4,15 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, Subject, switchMap, takeUntil } from 'rxjs';
 import { EventModel } from '../../models/event.model';
-import { DurationPipe } from "../../pipes/duration.pipe";
 import { EventService } from '../../services/event.service';
 import { GeneralService } from '../../services/general.service';
 import { HeaderService } from '../../services/header.service';
 
+
 @Component({
   selector: 'app-events',
   standalone: true,
-  imports: [CommonModule, FormsModule, DurationPipe],
+  imports: [CommonModule, FormsModule],
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss']
 })

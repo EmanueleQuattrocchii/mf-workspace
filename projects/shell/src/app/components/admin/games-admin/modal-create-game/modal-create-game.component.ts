@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { GameModel } from '../../../../models/game.model';
 import { GameService } from '../../../../services/game.service';
 
+
 @Component({
   selector: 'app-modal-create-game',
   standalone: true,
@@ -29,7 +30,7 @@ export class ModalCreateGameComponent {
   selectedImageFile: File | null = null;
 
   gameForm: FormGroup;
-  constructor(public as: AdminService, private formBuilder: FormBuilder, private router: Router, private gn: GeneralService, private gs: GameService) {
+  constructor( public as: AdminService, private formBuilder: FormBuilder, private router: Router, private gn: GeneralService, private gs: GameService) {
 
 
     this.gameForm = this.formBuilder.group({
