@@ -6,6 +6,7 @@ import { EventDetailAdminComponent } from './components/admin/events-admin/event
 import { EventsAdminComponent } from './components/admin/events-admin/events-admin.component';
 import { GamesAdminComponent } from './components/admin/games-admin/games-admin.component';
 import { UsersAdminComponent } from './components/admin/users-admin/users-admin.component';
+import { ChoiceChatComponent } from './components/choice-chat/choice-chat.component';
 import { ConfirmRegistrationComponent } from './components/confirm-registration/confirm-registration.component';
 import { EventDetailComponent } from './components/event-detail/event-detail.component';
 import { EventsComponent } from './components/events/events.component';
@@ -34,7 +35,9 @@ export const routes: Routes = [
       { path: 'events/:id', component: EventDetailComponent },
       { path: 'mobile', component: MobileComponent },
       { path: 'scheduler', component: SchedulerComponent },
-      { path: 'chat', component: SessionChatComponent, canActivate: [AuthGuardService] }
+      { path: 'chat', component: SessionChatComponent, canActivate: [AuthGuardService] },
+      { path: 'choice/chat', component: ChoiceChatComponent, canActivate: [AuthGuardService] }
+
     ]
   },
   {
