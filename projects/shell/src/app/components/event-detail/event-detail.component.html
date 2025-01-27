@@ -109,8 +109,11 @@
         </div>
     </div>
     <div #subModal></div>
-    <div class="modal-sign" *ngIf="this.gn.isSignModal">
+    <div class="modal-sign" *ngIf="this.gn.isSignModal && sessionDetail">
         <div class="modal-content">
+            <h2 class="title">Register like a Guest</h2>
+            <div class="subtitle">Please enter Your Details</div>
+            <span class="close" (click)="closeSignModal()"> <i class="fa-solid fa-x"></i></span>
             <form [formGroup]="registerForm">
                 <div class="input-group double">
                     <input type="text" formControlName="name" placeholder="Name" required
@@ -154,11 +157,11 @@
                         required</small>
                 </div>
                 <button type="submit" class="login-button" (click)="onSubmit()"
-                    *ngIf="sessionDetail!.reservations.length < sessionDetail!.seats && !checkSessionReservation(sessionDetail!)">
-                    Subscribe</button>
+                    *ngIf="sessionDetail.reservations.length < sessionDetail.seats && !checkSessionReservation(sessionDetail)">
+                    Register</button>
                 <button type="submit" class="login-button" (click)="onSubmit()"
-                    *ngIf="sessionDetail!.reservations.length >= sessionDetail!.seats && !checkSessionReservation(sessionDetail!)">
-                    Subscribe</button>
+                    *ngIf="sessionDetail.reservations.length >= sessionDetail.seats && !checkSessionReservation(sessionDetail)">
+                    Join Queue</button>
             </form>
             <!-- <div class="modal-sign-title">Sign in to register</div>
             <div class="modal-subtitle">You need to be signed in to register for this event</div>
@@ -170,7 +173,7 @@
         </div>
     </div>
 
-    <div class="session-details" *ngIf="isSessionDetail || sessionDetail">
+    <div class="session-details" *ngIf="isSessionDetail && sessionDetail">
         <div class="session-detail-content">
             <span class="close" (click)="closeSessionDetail()"> <i class="fa-solid fa-x"></i></span>
             <div class="session-detail-title">Session Details</div>

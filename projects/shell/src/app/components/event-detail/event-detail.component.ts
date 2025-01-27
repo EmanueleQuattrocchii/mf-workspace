@@ -87,6 +87,7 @@ export class EventDetailComponent implements OnInit {
 
     this.event = this.gn.eventDetail;
 
+    this.sessionDetail = this.event?.sessions![0];
     // setTimeout(() => {
     //   this.gn.isLoading = true;
     //   this.loadSubComponent();
@@ -96,7 +97,7 @@ export class EventDetailComponent implements OnInit {
   onSubmit() {
     if (this.registerForm.valid) {
       this.auth.registerGuest(this.registerForm.value).then(() => {
-        this.register(this.sessionDetail!);
+        this.registerGuest(this.sessionDetail!);
         this.gn.isSignModal = false;
       });
 
@@ -143,10 +144,31 @@ export class EventDetailComponent implements OnInit {
       // }, 1500);
     }
     else {
+      if (this.isSessionDetail) {
+        this.closeSessionDetail();
+      }
       this.gn.isSignModal = true;
       this.gn.isOverlayOn$.next(true);
     }
     //this.loadSubComponent();
+  }
+
+  registerGuest(session: gameSessionModel) {
+      this.gn.isLoading = true;
+      this.resService.createReservation(session.sessionId).then(() => {
+        this.gn.isLoading = false;
+        this.gn.isConfirmModal = true;
+        this.gn.isOverlayOn$.next(true);
+        this.sesService.getSessionById(session.sessionId).then((updatedSession) => {
+          const sessionIndex = this.event?.sessions?.findIndex(s => s.sessionId === session.sessionId);
+          if (sessionIndex !== undefined && sessionIndex !== -1 && this.event?.sessions) {
+            this.event.sessions[sessionIndex] = updatedSession;
+          }
+        });
+
+      }).catch(() => {
+        this.gn.isLoading = false;
+      });
   }
 
   joinQueue(session: gameSessionModel) {
@@ -185,6 +207,9 @@ export class EventDetailComponent implements OnInit {
       // }, 1500);
     }
     else {
+      if (this.isSessionDetail) {
+        this.closeSessionDetail();
+      }
       this.gn.isSignModal = true;
       this.gn.isOverlayOn$.next(true);
     }
@@ -223,7 +248,7 @@ export class EventDetailComponent implements OnInit {
   closeSessionDetail() {
     this.isSessionDetail = false;
     this.gn.isOverlayOn$.next(false);
-    this.sessionDetail = undefined;
+    // this.sessionDetail = this.event?.sessions![0];
   }
 
   closeSignModal() {
