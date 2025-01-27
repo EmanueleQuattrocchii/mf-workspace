@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject } from 'rxjs';
 import { Chat, Message } from '../models/chat.model';
+import { gameSessionModel } from '../models/gameSession.model';
+import { SessionService } from './session.service';
 
 @Injectable({ providedIn: 'root' })
 
@@ -12,7 +14,7 @@ export class SignalRService {
     public completeChat$: BehaviorSubject<Chat> = new BehaviorSubject<Chat>(null as any);
     public availableChats$: BehaviorSubject<Array<Chat>> = new BehaviorSubject<Array<Chat>>([]);
 
-    constructor() {
+    constructor(private sessionService: SessionService) {
         this.connection = new signalR.HubConnectionBuilder()
             .withUrl(this.hubUrl, {
                 accessTokenFactory: () => localStorage.getItem('token') ?? ''
@@ -47,10 +49,26 @@ export class SignalRService {
             .invoke('GetChats')
             .then((response: Chat[]) => {
                 console.log('Chats: ', response);
-                this.availableChats$.next(response);
+
+                // Itera su ogni chat per ottenere le sessionInfo
+                const chatsWithSessionInfo = response.map(chat => {
+                    return this.sessionService.getSessionById(Number(chat.sessionId)).then((sessionInfo: gameSessionModel) => {
+                        // Assegna sessionInfo a chat
+                        chat.sessionInfo = sessionInfo;
+                        return chat;
+                    });
+                });
+
+                // Usa Promise.all per attendere che tutte le chiamate a getSessionById siano completate
+                Promise.all(chatsWithSessionInfo)
+                    .then((updatedChats) => {
+                        this.availableChats$.next(updatedChats);
+                    })
+                    .catch((err) => console.error('Error while fetching session info: ', err));
             })
             .catch((err) => console.error('Error while getting chats: ', err));
     }
+
 
     joinGroup(groupName: string): Promise<void> {
         return this.connection

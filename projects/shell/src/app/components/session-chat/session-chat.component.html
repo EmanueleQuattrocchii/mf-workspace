@@ -1,18 +1,23 @@
 <div class="background-image">
-  <div class="chat-header">
-    <p>Session <span class="custom-text">chat</span></p>
-  </div>
 
   <div class="chat-container">
+    <div class="chat-header">
+      <p class="session-name">{{this.session?.game?.name}} <span class="custom-text">chat</span></p>
+      <div class="icon-custom" (click)="ExitChat()">
+        <i class="fa-solid fa-backward"></i>
+      </div>
+    </div>
     <div class="chat-messages">
-      <div *ngFor="let msg of this.ss.completeChat$.value?.messages" class="message"
+      <div *ngFor="let msg of (this.ss.completeChat$| async)?.messages, let last=last" class="message"
         [ngClass]="{'sent-message': msg.senderName === user?.email,'received-message': msg.senderName !== user?.email}">
         <strong>{{ msg.senderName }}</strong>
         <p>{{ msg.body }}</p>
         <div class="message-footer">
           <small>{{ msg.timeStamp| date:'HH:mm' }}</small>
-           <span class="read-status" *ngIf="msg.id === user?.name">
+          <span class="read-status" *ngIf="msg.id === user?.name">
           </span>
+        </div>
+        <div *ngIf="last" #last>
         </div>
       </div>
     </div>

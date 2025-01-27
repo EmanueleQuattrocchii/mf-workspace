@@ -7,6 +7,7 @@
   border-radius: 15px;
   background-color: rgba(255, 255, 255, 0.4);
   z-index: 3;
+  margin-top: 5vh;
 }
 
 .message {
@@ -75,14 +76,22 @@
   z-index: -1;
 }
 
+p.session-name {
+  color: black
+}
+
 .chat-header {
-  padding: 10px;
   text-align: center;
   border-radius: 15px 15px 0 0;
   color: white;
   font-size: 7vh;
   font-weight: 700;
+  background-color: rgba(255, 255, 255, 0.7294117647);
   z-index: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+
 }
 
 .chat-messages {

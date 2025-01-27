@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Message } from '../../models/chat.model';
+import { gameSessionModel } from '../../models/gameSession.model';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 import { SessionService } from '../../services/session.service';
@@ -16,31 +18,49 @@ import { SignalRService } from '../../services/signalr.service';
 })
 export class SessionChatComponent implements OnInit {
 
-  user: User | undefined;
-  session: SessionService | undefined;
-  message = '';
 
-  constructor(public ss: SignalRService, private us: AuthService, session: SessionService) {
+  user: User | undefined;
+  message = '';
+  groupName: string = "";
+  session: gameSessionModel | undefined;
+  @ViewChild('last') last: ElementRef | undefined;
+
+  constructor(public ss: SignalRService, private us: AuthService, private sessionService: SessionService, public router: Router, private activatedRoute: ActivatedRoute) {
     this.us.user.subscribe(user => {
       if (user) {
         this.user = user;
       }
     });
+
+    this.sessionService.getSessionById(Number(this.groupName));
+    this.session = this.sessionService.sessionDetail;
   }
 
-
   ngOnInit(): void {
-    this.ss.startConnection("27");
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.groupName = params['sessionId'];
+    });
+    this.ss.startConnection();
+    this.ss.joinGroup(this.groupName);
     this.ss.onReceiveMessage((message: Message) => {
       this.ss.completeChat$.value.messages.push(message);
     });
+
   }
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.last?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 1000);
+  }
+  ExitChat() {
+    this.ss.leaveGroup(this.groupName);
+    this.router.navigate(['/choice/chat']);
+  }
+
   sendMessage(): void {
     if (this.message.trim()) {
-      this.ss.sendGroupMessage("27", this.message);
+      this.ss.sendGroupMessage(this.groupName, this.message);
     }
     this.message = '';
   }
-
-
 }

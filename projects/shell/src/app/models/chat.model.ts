@@ -1,3 +1,5 @@
+import { gameSessionModel } from "./gameSession.model"
+
 export interface Message {
   id: string,
   body: string,
@@ -9,5 +11,6 @@ export interface Chat {
   id: string,
   participants: Array<string>,
   sessionId: string,
-  messages: Array<Message>
+  messages: Array<Message>,
+  sessionInfo?: gameSessionModel
 }
