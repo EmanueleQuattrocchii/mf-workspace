@@ -19,21 +19,26 @@ export class SignalRService {
             .withUrl(this.hubUrl, {
                 accessTokenFactory: () => localStorage.getItem('token') ?? ''
             })
-            .withAutomaticReconnect()
+            .withAutomaticReconnect([0, 2000, 10000, 30000])
             .build();
-
+        this.startConnection();
         this.registerOnServerEvents();
     }
 
-    startConnection(): void {
-        this.connection
-            .start()
-            .then(() => {
+    async startConnection(): Promise<void> {
+        try {
+            if (this.connection.state === signalR.HubConnectionState.Disconnected) {
+                await this.connection.start();
                 console.log('SignalR connection started');
-                this.getChats();
-            })
-            .catch((err) => console.error('Error while starting connection: ', err));
+                await this.getChats();
+            } else {
+                console.log('La connessione è già attiva o in fase di connessione');
+            }
+        } catch (err) {
+            console.error('Error while starting connection: ', err);
+        }
     }
+
 
     sendGroupMessage(sesssionId: string, message: string): void {
         this.connection
@@ -44,54 +49,31 @@ export class SignalRService {
             .catch((err) => console.error('Error while sending message: ', err));
     }
 
-    getChats(): void {
-        this.connection
-            .invoke('GetChats')
-            .then((response: Chat[]) => {
-                console.log('Chats: ', response);
 
-                // Itera su ogni chat per ottenere le sessionInfo
-                const chatsWithSessionInfo = response.map(chat => {
-                    return this.sessionService.getSessionById(Number(chat.sessionId)).then((sessionInfo: gameSessionModel) => {
-                        // Assegna sessionInfo a chat
-                        chat.sessionInfo = sessionInfo;
-                        return chat;
-                    });
-                });
 
-                // Usa Promise.all per attendere che tutte le chiamate a getSessionById siano completate
-                Promise.all(chatsWithSessionInfo)
-                    .then((updatedChats) => {
-                        this.availableChats$.next(updatedChats);
-                    })
-                    .catch((err) => console.error('Error while fetching session info: ', err));
-            })
-            .catch((err) => console.error('Error while getting chats: ', err));
+    async joinGroup(groupName: string): Promise<void> {
+        try {
+            if (this.connection.state !== signalR.HubConnectionState.Connected) {
+                console.log('Connection not in connected state. Attempting to reconnect...');
+                await this.startConnection();
+            }
+            await this.connection.invoke('JoinGroup', groupName);
+            console.log(`Joined group: ${groupName}`);
+            await this.GetChatHistory(groupName);
+        } catch (err) {
+            console.error('Error joining group:', err);
+        }
     }
 
 
-    joinGroup(groupName: string): Promise<void> {
-        return this.connection
-            .invoke('JoinGroup', groupName)
-            .then(() => {
-                this.connection
-                    .invoke('GetChatHistory', groupName)
-                    .then((response: Chat) => {
-                        console.log('Chat precedente: ', response);
-                        this.completeChat$.next(response)
-                    });
-            })
-            .catch(err => {
-                console.error('Error joining group:', err);
-                throw err;
-            });
-    }
-
-    leaveGroup(groupName: string): void {
-        this.connection
-            .invoke('LeaveGroup', groupName)
-            .then(() => { console.log('LeaveGroup: ', groupName) })
-            .catch((err) => console.error('Error leaving group: ', err));
+    async leaveGroup(groupName: string): Promise<void> {
+        try {
+            await this.connection.invoke('LeaveGroup', groupName);
+            console.log('LeaveGroup: ', groupName);
+            await this.getChats();
+        } catch (err) {
+            console.error('Error leaving group: ', err);
+        }
     }
     sendNotification(userId: string, message: string): void {
         this.connection
@@ -99,16 +81,42 @@ export class SignalRService {
             .catch((err) => console.error('Error while sending notification: ', err));
     }
 
-    onReceiveMessage(callback: (message: Message) => void): void {
-        this.connection.on('SendGroupMessage', (message: Message) => {
-            callback(message);
-            console.log('Messaggio ricevuto:', message);
+    private registerOnServerEvents(): void {
+        this.connection.on('ReceiveMessage', (message: Message) => {
+            const currentChat = this.completeChat$.value;
+            this.getChats();
+            if (currentChat) {
+                currentChat.messages.push(message);
+                this.completeChat$.next(currentChat);
+            }
+            else {
+                console.error('No chat to add message to');
+            }
         });
     }
 
-    private registerOnServerEvents(): void {
-        this.connection.on('ReceiveMessage', (user: string, message: string) => {
-            console.log(`Message received from ${user}: ${message}`);
-        });
+    private async GetChatHistory(groupName: string): Promise<void> {
+        try {
+            const response: Chat = await this.connection.invoke('GetChatHistory', groupName);
+            console.log('Chat precedente: ', response);
+            this.completeChat$.next(response);
+        } catch (err) {
+            console.error('Error while getting chat history: ', err);
+        }
+    }
+
+    private async getChats(): Promise<void> {
+        try {
+            const response: Chat[] = await this.connection.invoke('GetChats');
+            console.log('Chats: ', response);
+            const chatsWithSessionInfo = await Promise.all(response.map(async (chat) => {
+                const sessionInfo: gameSessionModel = await this.sessionService.getSessionById(Number(chat.sessionId));
+                chat.sessionInfo = sessionInfo;
+                return chat;
+            }));
+            this.availableChats$.next(chatsWithSessionInfo);
+        } catch (err) {
+            console.error('Error while getting chats: ', err);
+        }
     }
 }

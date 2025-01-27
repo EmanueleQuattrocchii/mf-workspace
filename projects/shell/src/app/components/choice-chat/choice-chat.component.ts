@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Message } from '../../models/chat.model';
 import { User } from '../../models/user.model';
 import { TimeAgoPipe } from "../../pipes/time-ago.pipe";
 import { AuthService } from '../../services/auth.service';
@@ -28,8 +27,8 @@ export class ChoiceChatComponent {
   }
   ngOnInit(): void {
     this.ss.startConnection();
-    this.ss.onReceiveMessage((message: Message) => {
-      this.ss.completeChat$.value.messages.push(message);
-    });
+    // this.ss.onReceiveMessage((message: Message) => {
+    //   this.ss.completeChat$.value.messages.push(message);
+    // });
   }
 }

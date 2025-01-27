@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Message } from '../../models/chat.model';
 import { gameSessionModel } from '../../models/gameSession.model';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
@@ -42,9 +41,6 @@ export class SessionChatComponent implements OnInit {
     });
     this.ss.startConnection();
     this.ss.joinGroup(this.groupName);
-    this.ss.onReceiveMessage((message: Message) => {
-      this.ss.completeChat$.value.messages.push(message);
-    });
 
   }
   ngAfterViewInit(): void {
