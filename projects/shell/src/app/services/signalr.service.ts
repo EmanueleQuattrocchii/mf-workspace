@@ -10,6 +10,7 @@ export class SignalRService {
     private connection: signalR.HubConnection;
     private hubUrl = 'https://localhost:7015/chatHub';
     public completeChat$: BehaviorSubject<Chat> = new BehaviorSubject<Chat>(null as any);
+    public availableChats$: BehaviorSubject<Array<Chat>> = new BehaviorSubject<Array<Chat>>([]);
 
     constructor() {
         this.connection = new signalR.HubConnectionBuilder()
@@ -22,20 +23,12 @@ export class SignalRService {
         this.registerOnServerEvents();
     }
 
-
-    startConnection(sessiondId: string): void {
+    startConnection(): void {
         this.connection
             .start()
             .then(() => {
                 console.log('SignalR connection started');
-                this.joinGroup(sessiondId).then(() => {
-                    this.connection
-                        .invoke('GetChatHistory', sessiondId)
-                        .then((response: Chat) => {
-                            console.log('Chat precedente: ', response);
-                            this.completeChat$.next(response)
-                        });
-                })
+                this.getChats();
             })
             .catch((err) => console.error('Error while starting connection: ', err));
     }
@@ -43,15 +36,33 @@ export class SignalRService {
     sendGroupMessage(sesssionId: string, message: string): void {
         this.connection
             .invoke('SendGroupMessage', sesssionId, message)
-            .then((response) => {
+            .then(() => {
                 console.log('Messaggio inviato', message);
             })
             .catch((err) => console.error('Error while sending message: ', err));
     }
+
+    getChats(): void {
+        this.connection
+            .invoke('GetChats')
+            .then((response: Chat[]) => {
+                console.log('Chats: ', response);
+                this.availableChats$.next(response);
+            })
+            .catch((err) => console.error('Error while getting chats: ', err));
+    }
+
     joinGroup(groupName: string): Promise<void> {
         return this.connection
             .invoke('JoinGroup', groupName)
-            .then(() => { console.log(`Joined group: ${groupName}`) })
+            .then(() => {
+                this.connection
+                    .invoke('GetChatHistory', groupName)
+                    .then((response: Chat) => {
+                        console.log('Chat precedente: ', response);
+                        this.completeChat$.next(response)
+                    });
+            })
             .catch(err => {
                 console.error('Error joining group:', err);
                 throw err;
@@ -76,8 +87,6 @@ export class SignalRService {
             console.log('Messaggio ricevuto:', message);
         });
     }
-
-
 
     private registerOnServerEvents(): void {
         this.connection.on('ReceiveMessage', (user: string, message: string) => {

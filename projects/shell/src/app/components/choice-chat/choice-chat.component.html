@@ -3,13 +3,17 @@
         <p>Available <span class="custom-text">chat</span></p>
     </div>
     <div class="chat-container">
-        <div class="chat-item">
-            <div class="chat-avatar">JD</div>
-            <div class="chat-info">
-                <div class="chat-name">John Doe</div>
-                <div class="chat-preview">Hey, how are you doing?</div>
+        <div class="chat-item" *ngFor="let chat of this.ss.availableChats$?.value">
+            <div class="chat-avatar">CS</div>
+            <div class="chat-content">
+                <div class="chat-time">2h ago</div>
+                <div class="chat-name">Customer Support</div>
+                <div class="chat-sender">{{chat.messages.at(-1)?.senderName}}:</div>
+                <div class="chat-message">{{chat.messages.at(-1)?.body}}</div>
             </div>
-            <div class="chat-time">2m ago</div>
+        </div>
+        <div *ngIf="!this.ss.completeChat$.value?.messages?.length">
+            Sent the first message!
         </div>
     </div>
 </div>
