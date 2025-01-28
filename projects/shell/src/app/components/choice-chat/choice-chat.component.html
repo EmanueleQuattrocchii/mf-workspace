@@ -1,0 +1,20 @@
+<div class="background-image">
+    <div class="chat-header">
+        <p>Available <span class="custom-text">chat</span></p>
+    </div>
+    <div class="chat-container">
+        <div class="chat-item" *ngFor="let chat of this.ss.availableChats$ | async"
+            (click)="this.router.navigate(['/chat'], {queryParams: {sessionId: chat.sessionId}})">
+            <div class="chat-avatar">
+                <img [src]="chat.sessionInfo?.game?.imgUrl" alt="Avatar" class="avatar">
+            </div>
+            <div class="chat-content">
+                <div class="chat-time">{{chat.messages.at(-1)!.timeStamp | timeAgo}}</div>
+                <div class="chat-name">{{chat.sessionInfo?.game?.name}}</div>
+                <div class="chat-sender">{{chat.messages.at(-1)?.senderName}}:</div>
+                <div class="chat-message">{{chat.messages.at(-1)?.body}}</div>
+                <div *ngIf="chat.messages.length<=0" class="chat-message">Send the first message!</div>
+            </div>
+        </div>
+    </div>
+</div>

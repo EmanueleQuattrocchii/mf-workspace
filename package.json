@@ -14,7 +14,9 @@
     "@angular/platform-browser-dynamic": "^19.1.0",
     "@angular/platform-server": "^19.1.0",
     "@angular/ssr": "^19.1.0",
+    "@microsoft/signalr": "^8.0.7",
     "@softarc/native-federation-node": "^2.0.10",
+    "date-fns": "^4.1.0",
     "es-module-shims": "^1.5.12",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
